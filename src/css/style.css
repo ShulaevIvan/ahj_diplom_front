@@ -1,0 +1,164 @@
+.app-container {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    width: 100%;
+}
+.main-container-wrap {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
+    /* min-height: 100vh; */
+    max-width: 800px;
+}
+.app-header {
+    display: flex;
+    flex-direction: row;
+    width: 99.1%;
+    max-width: 800px;
+    border: 1px solid;
+    min-height: 50px;
+    align-items: center;
+    justify-content: center;
+}
+.app-header-title-wrap {
+    display: flex;
+    align-items: flex-start;
+    align-items: center;
+    width: 42%;
+    min-height: 25px;
+}
+.app-header-search-wrap {
+    width: 51%;
+    min-height: 25px;
+}
+.app-header-search-wrap input {
+    min-height: 25px;
+}
+.content-column {
+    display: flex;
+    flex-wrap: wrap;
+    width: 68%;
+    border: 1px solid;
+    height: 600px;
+    padding: 5px;
+    overflow-y: scroll;
+}
+.sidebar-column {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    width: 30%;
+    border: 1px solid;
+    border-left: none;
+}
+.main-input-wrap {
+    display: flex;
+    width: 100%;
+    padding: 5px 0;
+}
+.main-input-row {
+    display: flex;
+    flex-direction: row;
+    width: 69.3%;
+    position: relative;
+    max-height: 30px;
+    border: 1px solid;
+}
+.main-input-item-upload-icon, .main-input-item-mic {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 10%;
+    min-width: 30px;
+    max-height: 30px;
+    align-items: center;
+    justify-content: center;
+}
+.upload-icon::before {
+    position: absolute;
+    content: '\1F4CE';
+    font-size: 20px;
+    min-width: 25px;
+    min-height: 30px;
+    top: 0.5%;
+    right: 15%;
+    pointer-events: none;
+    cursor: pointer;
+    z-index: 0;
+}
+.upload-icon::before:hover {
+    cursor: pointer;
+}
+.mic-btn::before {
+    position: absolute;
+    font-size: 20px;
+    content: '\1F399';
+    top: 0.5%;
+    right: 7%;
+    cursor: pointer;
+}
+.main-input-item {
+    display: flex;
+    width: 80%;
+    min-height: 30px;
+    max-height: 30px;
+}
+.main-input {
+    width: 100%;
+    max-height: 28px;
+    min-height: 28px;
+    border: none;
+    outline: none;
+}
+.main-input-item-mic {
+    display: flex;
+    width: 30%;
+    min-height: 35px;
+}
+.hidden-upload-btn {
+    min-width: 30px;
+    min-height: 30px;
+    max-width: 30px;
+    max-height: 30px;
+    position: absolute;
+    top: 0.5%;
+    right: 15%;
+    opacity: 0.0;
+    z-index: 3;
+    cursor: pointer;
+}
+.hidden-upload-btn:hover {
+    cursor: pointer;
+}
+.content-item {
+    flex-direction: column;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: right;
+    align-items: flex-end;
+    width: 100%;
+    margin-bottom: 5px;
+}
+.content-text {
+    display: flex;
+    flex-wrap: wrap;
+
+    background-color: wheat;
+    display: flex;
+    text-align: right;
+    width: 50%;
+}
+.content-text-value {
+    display: flex;
+    text-align: right;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+.content-item-date {
+    padding: 0 10px;
+    width: 100%;
+    background-color: wheat;
+}

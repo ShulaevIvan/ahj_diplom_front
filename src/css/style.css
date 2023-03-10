@@ -41,7 +41,8 @@
     flex-wrap: wrap;
     width: 68%;
     border: 1px solid;
-    height: 600px;
+    max-height: 600px;
+    height: auto;
     padding: 5px;
     overflow-y: scroll;
 }
@@ -140,7 +141,7 @@
     justify-content: right;
     align-items: flex-end;
     width: 100%;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
 }
 .content-text {
     display: flex;

@@ -8,7 +8,6 @@ class FromInput {
         this.builder = new MessageBuilder(appTag);
         this.serverUrl = 'ws://localhost:7070'
         this.wsServer = new WebSocket(this.serverUrl);
-        console.log(this.wsServer)
 
         this.inputAccept = this.inputAccept.bind(this);
         this.validateMainInput = this.validateMainInput.bind(this);
@@ -37,10 +36,10 @@ class FromInput {
         const data = {}
         if (e.key === 'Enter') {
             const inputType = this.validateMainInput(inputValue);
-            if (inputType === 'text') {
+            if (inputType === 'text' || inputType === 'url' || inputType === 'img') {
                 data.type = inputType
                 data.value = inputValue
-                this.builder.createMessage(inputValue);
+                this.builder.createMessage(data);
                 this.wsServer.send(JSON.stringify(data))
                 this.mainInput.value = '';
             }

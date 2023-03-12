@@ -158,6 +158,11 @@
     padding: 10px;
     margin-bottom: 10px;
 }
+.content-text-value img {
+    max-width: 250px;
+    max-height: 250px;
+    cursor: pointer;
+}
 .content-item-date {
     padding: 0 10px;
     width: 100%;

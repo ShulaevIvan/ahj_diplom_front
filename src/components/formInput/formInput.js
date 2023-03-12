@@ -5,6 +5,7 @@ class FromInput {
     constructor(appTag) {
         this.mainContainer = document.querySelector(appTag);
         this.mainInput = this.mainContainer.querySelector('.main-input');
+        this.fileInput = this.mainContainer.querySelector('.hidden-upload-btn');
         this.builder = new MessageBuilder(appTag);
         this.serverUrl = 'ws://localhost:7070'
         this.wsServer = new WebSocket(this.serverUrl);
@@ -14,11 +15,13 @@ class FromInput {
         this.openWs = this.openWs.bind(this);
         this.closeWs = this.closeWs.bind(this);
         this.messageWs = this.messageWs.bind(this);
+        this.fileLoad = this.fileLoad.bind(this);
 
         this.wsServer.addEventListener('open', this.openWs);
         this.wsServer.addEventListener('close', this.closeWs);
         this.wsServer.addEventListener('message', this.messageWs);
         this.mainInput.addEventListener('keydown', this.inputAccept);
+        this.fileInput.addEventListener('change', this.fileLoad);
 
     }
     openWs = (e) => {
@@ -28,7 +31,7 @@ class FromInput {
 
     }
     messageWs = (e) => {
-        this.wsServer.send(e)
+        this.wsServer.send(e);
     }
 
     inputAccept = (e) => {
@@ -43,6 +46,25 @@ class FromInput {
                 this.wsServer.send(JSON.stringify(data))
                 this.mainInput.value = '';
             }
+        }
+    }
+
+    fileLoad = (e) => {
+        const file = e.srcElement.files[0];
+
+        if (!file) return
+
+        const url = URL.createObjectURL(file);
+        const reader = new FileReader();
+        if (file.type === 'image/png' || file.type === 'image/jpeg' || file.type === 'image/jpg') {
+            // const blob = new Blob([`${file.name}`], {type: `${file.type}`});
+            console.log(url)
+            const data = {
+                type: file.type,
+                value: url
+            }
+            this.builder.createMessage(data)
+            this.wsServer.send(JSON.stringify(data));
         }
     }
 

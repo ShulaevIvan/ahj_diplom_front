@@ -2,6 +2,16 @@ class MessageBuilder {
     constructor(appTag) {
         this.mainTag = document.querySelector('.app-container');
         this.contentWrap = this.mainTag.querySelector('.content-column');
+        this.file = undefined;
+        this.downloadFile = this.downloadFile.bind(this);
+    }
+
+    downloadFile = (e) => {
+        // const a = document.createElement('a');
+        // a.href = url;
+        // a.download = 'test.png';
+        // a.click();
+        // URL.revokeObjectURL(url);
     }
 
     createMessage(data) {
@@ -19,6 +29,13 @@ class MessageBuilder {
         if (data.type === 'url') {
             const link = `<a href="${data.value}" target="_blank"> ${data.value}</a>`;
             contentTextValue.innerHTML = link;
+        }
+        else if (data.type === 'image/png' || data.type === 'image/jpeg' || data.type === 'image/jpg') {
+            const img = document.createElement('img');
+            img.setAttribute('src', data.value);
+            this.file = data;
+            img.addEventListener('click', this.downloadFile)
+            contentTextValue.appendChild(img);
         }
         else if (data.type === 'text') {
             contentTextValue.textContent = data.value;

@@ -150,21 +150,39 @@
     background-color: wheat;
     display: flex;
     text-align: right;
-    width: 50%;
+    width: 60%;
 }
 .content-text-value {
     display: flex;
     text-align: right;
     padding: 10px;
     margin-bottom: 10px;
+    flex-wrap: wrap;
+    width: 100%;
 }
 .content-text-value img {
     max-width: 250px;
     max-height: 250px;
     cursor: pointer;
 }
+.content-text-value video,  .content-text-value audio {
+    max-width: 300px;
+    max-height: 300px;
+    width: 90%;
+}
 .content-item-date {
     padding: 0 10px;
     width: 100%;
     background-color: wheat;
+}
+.download-btn {
+    display: flex;
+    width: 10%;
+    justify-content: right;
+    text-decoration: none;
+    cursor: pointer;
+}
+.download-btn::before {
+    content: '\2193';
+    font-size: 40px;
 }

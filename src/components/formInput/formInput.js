@@ -51,21 +51,37 @@ class FromInput {
 
     fileLoad = (e) => {
         const file = e.srcElement.files[0];
-
         if (!file) return
-
         const url = URL.createObjectURL(file);
-        const reader = new FileReader();
+        let data = {}
         if (file.type === 'image/png' || file.type === 'image/jpeg' || file.type === 'image/jpg') {
-            // const blob = new Blob([`${file.name}`], {type: `${file.type}`});
-            console.log(url)
-            const data = {
+            data = {
                 type: file.type,
+                name: file.name,
                 value: url
             }
             this.builder.createMessage(data)
             this.wsServer.send(JSON.stringify(data));
         }
+        else if (file.type === 'audio/mpeg') {
+            data = {
+                type: file.type,
+                name: file.name,
+                value: url
+            }
+            this.builder.createMessage(data)
+            this.wsServer.send(JSON.stringify(data));
+        }
+        else if (file.type === "video/mp4") {
+            data = {
+                type: file.type,
+                name: file.name,
+                value: url
+            }
+            this.builder.createMessage(data)
+        }
+        console.log(file)
+
     }
 
     validateMainInput = (inputData) => {

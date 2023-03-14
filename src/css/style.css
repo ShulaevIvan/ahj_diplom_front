@@ -186,3 +186,7 @@
     content: '\2193';
     font-size: 40px;
 }
+.document-icon::before {
+    content: '\1F5CE';
+    font-size: 40px;
+}

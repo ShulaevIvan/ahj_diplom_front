@@ -4,6 +4,7 @@ import MessageBuilder from '../messageBuilder/messageBuilder';
 class FromInput {
     constructor(appTag) {
         this.mainContainer = document.querySelector(appTag);
+        this.contentColumn = this.mainContainer.querySelector('.content-column');
         this.mainInput = this.mainContainer.querySelector('.main-input');
         this.fileInput = this.mainContainer.querySelector('.hidden-upload-btn');
         this.builder = new MessageBuilder(appTag);
@@ -40,6 +41,7 @@ class FromInput {
         if (e.key === 'Enter') {
             const inputType = this.validateMainInput(inputValue);
             if (inputType === 'text' || inputType === 'url' || inputType === 'img') {
+                
                 data.type = inputType
                 data.value = inputValue
                 this.builder.createMessage(data);
@@ -80,7 +82,15 @@ class FromInput {
             }
             this.builder.createMessage(data)
         }
-        console.log(file)
+        else {
+            e.preventDefault();
+            data = {
+                type: file.type,
+                name: file.name,
+                value: url
+            }
+            this.builder.createMessage(data)
+        }
 
     }
 

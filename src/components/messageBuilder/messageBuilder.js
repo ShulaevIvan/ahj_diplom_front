@@ -7,6 +7,7 @@ class MessageBuilder {
     }
 
     downloadFile = (e) => {
+        e.preventDefault();
         if (e.target.classList.contains('download-btn')) {
             e.preventDefault();
             const link = document.createElement('a');
@@ -19,13 +20,27 @@ class MessageBuilder {
         else {
             const link = document.createElement('a');
             const name = e.target.getAttribute('name');
-            link.href = e.target.src
+            link.href = e.target.href;
             link.rel = 'noopener';
             link.download = name;
             link.click();
         }
        
     }
+
+    downloadFile(blob, fileName) {
+        const link = document.createElement('a');
+        // create a blobURI pointing to our Blob
+        link.href = URL.createObjectURL(blob);
+        link.download = fileName;
+        // some browser needs the anchor to be in the doc
+        document.body.append(link);
+        link.click();
+        link.remove();
+        // in case the Blob uses a lot of memory
+        setTimeout(() => URL.revokeObjectURL(link.href), 7000);
+    };
+      
 
     createMessage(data) {
         const audioTypes = ['audio/ogg', 'audio/wav', 'audio/mp3', 'audio/mpeg'];
@@ -91,12 +106,22 @@ class MessageBuilder {
         else if (data.type === 'text') {
             contentTextValue.textContent = data.value;
         }
+        else {
+            const fileIcon = document.createElement('a');
+            fileIcon.setAttribute('name', data.name.replace(/\s/g, ''));
+            fileIcon.classList.add('document-icon');
+            // const file = new File([myBlob], "name");
+            fileIcon.href = data.value;
+            fileIcon.textContent = data.name
+            contentTextValue.appendChild(fileIcon);
+            fileIcon.addEventListener('click', this.downloadFile);
+        }
         contentDate.textContent = date;
         contentText.appendChild(contentTextValue);
         contentText.appendChild(contentDate);
         contentItem.appendChild(contentText);
         this.contentWrap.appendChild(contentItem);
-
     }
+
 }
 export default MessageBuilder

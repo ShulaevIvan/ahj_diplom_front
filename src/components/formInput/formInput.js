@@ -1,5 +1,5 @@
 import '../messageBuilder/messageBuilder';
-import MessageBuilder from '../messageBuilder/messageBuilder';
+import messageBuilder from '../messageBuilder/messageBuilder';
 
 class FromInput {
     constructor(appTag) {
@@ -7,7 +7,7 @@ class FromInput {
         this.contentColumn = this.mainContainer.querySelector('.content-column');
         this.mainInput = this.mainContainer.querySelector('.main-input');
         this.fileInput = this.mainContainer.querySelector('.hidden-upload-btn');
-        this.builder = new MessageBuilder(appTag);
+        this.builder = messageBuilder;
         this.serverUrl = 'ws://localhost:7070'
         this.wsServer = new WebSocket(this.serverUrl);
 
@@ -60,39 +60,56 @@ class FromInput {
             data = {
                 type: file.type,
                 name: file.name,
-                value: url
+                value: url,
+                file: file
             }
             this.builder.createMessage(data)
-            this.wsServer.send(JSON.stringify(data));
+            this.wsServer.send(data);
         }
         else if (file.type === 'audio/mpeg') {
-            data = {
-                type: file.type,
-                name: file.name,
-                value: url
-            }
-            this.builder.createMessage(data)
-            this.wsServer.send(JSON.stringify(data));
+            const unicode = this.getBase64(file, url);
         }
         else if (file.type === "video/mp4") {
             data = {
                 type: file.type,
                 name: file.name,
-                value: url
+                value: url,
+                file: file
             }
-            this.builder.createMessage(data)
+            this.builder.createMessage(data);
+            this.wsServer.send(JSON.stringify(data));
         }
         else {
             e.preventDefault();
             data = {
                 type: file.type,
                 name: file.name,
-                value: url
+                value: url,
+                file: file
             }
             this.builder.createMessage(data)
         }
 
     }
+
+    getBase64(file, url) {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => {
+            const data = {
+                type: file.type,
+                name: file.name,
+                value: url,
+                file: reader.result
+            }
+            this.builder.createMessage(data)
+            this.wsServer.send(JSON.stringify(data));
+        };
+        reader.onerror = function (error) {
+          console.log('Error: ', error);
+        };
+     }
+     
 
     validateMainInput = (inputData) => {
         const catchUrl = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)/

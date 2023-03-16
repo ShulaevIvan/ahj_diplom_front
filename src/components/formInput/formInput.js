@@ -8,6 +8,7 @@ class FromInput {
         this.mainInput = this.mainContainer.querySelector('.main-input');
         this.fileInput = this.mainContainer.querySelector('.hidden-upload-btn');
         this.builder = messageBuilder;
+        this.lastMessageId = 1;
         this.serverUrl = 'ws://localhost:7070'
         this.wsServer = new WebSocket(this.serverUrl);
 
@@ -32,22 +33,28 @@ class FromInput {
 
     }
     messageWs = (e) => {
-        this.wsServer.send(e);
+        this.lastMessageId = e.data;
     }
+        
 
     inputAccept = (e) => {
         const inputValue = e.target.value;
         const data = {}
-        if (e.key === 'Enter') {
+
+        if (e.key === 'Enter' && inputValue !== '' && inputValue.trim() !== '') {
+            data.id = this.lastMessageId;
             const inputType = this.validateMainInput(inputValue);
-            if (inputType === 'text' || inputType === 'url' || inputType === 'img') {
-                
-                data.type = inputType
-                data.value = inputValue
-                this.builder.createMessage(data);
-                this.wsServer.send(JSON.stringify(data))
-                this.mainInput.value = '';
-            }
+            const lastItem = this.contentColumn.lastChild;
+            data.type = inputType;
+            data.name = inputValue;
+            data.value = inputValue;
+            data.date = new Date().getTime();
+            this.builder.createMessage(data);
+            this.wsServer.send(JSON.stringify(data));
+            this.mainInput.value = '';
+            
+            if (lastItem) lastItem.scrollIntoView(true);
+
         }
     }
 
@@ -56,38 +63,21 @@ class FromInput {
         if (!file) return
         const url = URL.createObjectURL(file);
         let data = {}
-        if (file.type === 'image/png' || file.type === 'image/jpeg' || file.type === 'image/jpg') {
+        if (file.type === 'image/png' || file.type === 'image/jpeg' || file.type === 'image/jpg' || file.type === 'text') {
             data = {
+                id: this.lastMessageId,
                 type: file.type,
                 name: file.name,
                 value: url,
-                file: file
+                file: file,
+                date: new Date().getTime()
             }
             this.builder.createMessage(data)
-            this.wsServer.send(data);
-        }
-        else if (file.type === 'audio/mpeg') {
-            const unicode = this.getBase64(file, url);
-        }
-        else if (file.type === "video/mp4") {
-            data = {
-                type: file.type,
-                name: file.name,
-                value: url,
-                file: file
-            }
-            this.builder.createMessage(data);
             this.wsServer.send(JSON.stringify(data));
         }
         else {
             e.preventDefault();
-            data = {
-                type: file.type,
-                name: file.name,
-                value: url,
-                file: file
-            }
-            this.builder.createMessage(data)
+            this.getBase64(file, url);
         }
 
     }
@@ -97,15 +87,17 @@ class FromInput {
         reader.readAsDataURL(file);
         reader.onload = () => {
             const data = {
+                id: this.lastMessageId,
                 type: file.type,
                 name: file.name,
                 value: url,
-                file: reader.result
+                file: reader.result,
+                date: new Date().getTime()
             }
             this.builder.createMessage(data)
             this.wsServer.send(JSON.stringify(data));
         };
-        reader.onerror = function (error) {
+        reader.onerror = (error) => {
           console.log('Error: ', error);
         };
      }

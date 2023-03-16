@@ -25,10 +25,9 @@ class MessageBuilder {
         const contentText = document.createElement('div');
         const contentTextValue = document.createElement('div');
         const contentDate = document.createElement('div');
-
-        const date = new Date().toLocaleString();
-
+        const date = new Date(data.date).toLocaleString('ru');
         contentItem.classList.add('content-item');
+        contentItem.setAttribute('messageId', data.id);
         contentText.classList.add('content-text');
         contentTextValue.classList.add('content-text-value');
         contentDate.classList.add('content-item-date');

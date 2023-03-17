@@ -52,8 +52,7 @@ class FromInput {
             this.builder.createMessage(data);
             this.wsServer.send(JSON.stringify(data));
             this.mainInput.value = '';
-            
-            if (lastItem) lastItem.scrollIntoView(true);
+            if (lastItem.lastChild) lastItem.scrollIntoView(true);
 
         }
     }

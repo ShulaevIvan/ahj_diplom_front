@@ -17,7 +17,7 @@ class MessageBuilder {
     }
       
 
-    createMessage(data) {
+    createMessage(data, history = false) {
         const audioTypes = ['audio/ogg', 'audio/wav', 'audio/mp3', 'audio/mpeg'];
         const videoTypes = ['video/mp4', 'video/ogg', 'video/webm'];
         const imageTypes = ['image/apng', 'image/avif', 'image/gif', 'image/jpeg', 'image/png', 'image/svg+xml', 'image/webp']
@@ -98,7 +98,12 @@ class MessageBuilder {
         contentText.appendChild(contentTextValue);
         contentText.appendChild(contentDate);
         contentItem.appendChild(contentText);
-        this.contentWrap.appendChild(contentItem);
+        if (!history) {
+            this.contentWrap.appendChild(contentItem);
+        }
+        else {
+            this.contentWrap.insertBefore(contentItem, this.contentWrap.firstElementChild)
+        }
     }
 
 }

@@ -8,7 +8,7 @@ class FromInput {
         this.mainInput = this.mainContainer.querySelector('.main-input');
         this.fileInput = this.mainContainer.querySelector('.hidden-upload-btn');
         this.builder = messageBuilder;
-        this.lastMessageId = 1;
+        this.lastMessageId = undefined;
         this.serverUrl = 'ws://localhost:7070'
         this.wsServer = new WebSocket(this.serverUrl);
 
@@ -33,7 +33,7 @@ class FromInput {
 
     }
     messageWs = (e) => {
-        this.lastMessageId = e.data;
+        // this.lastMessageId = e.data;
     }
         
 
@@ -46,15 +46,15 @@ class FromInput {
             fetch('http://localhost:7070/messages/lastid', { method: 'GET'})
             .then((response) => response.json())
             .then((data) => {
+                this.lastMessageId = data.lastId;
                 const inputType = this.validateMainInput(inputValue);
                 const lastItem = this.contentColumn.lastChild;
-                data.id = data.lastId;
+                data.id = this.lastMessageId,
                 data.type = inputType;
                 data.name = inputValue;
                 data.value = inputValue;
                 data.date = new Date().getTime();
-                this.builder.createMessage(data);
-                console.log(data)
+                this.builder.createMessage(data, this.lastMessageId);
                 this.wsServer.send(JSON.stringify(data));
 
                 this.mainInput.value = '';

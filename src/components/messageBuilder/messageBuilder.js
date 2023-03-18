@@ -17,7 +17,7 @@ class MessageBuilder {
     }
       
 
-    createMessage(data, history = false) {
+    createMessage(data, id) {
         const audioTypes = ['audio/ogg', 'audio/wav', 'audio/mp3', 'audio/mpeg'];
         const videoTypes = ['video/mp4', 'video/ogg', 'video/webm'];
         const imageTypes = ['image/apng', 'image/avif', 'image/gif', 'image/jpeg', 'image/png', 'image/svg+xml', 'image/webp']
@@ -27,7 +27,12 @@ class MessageBuilder {
         const contentDate = document.createElement('div');
         const date = new Date(data.date).toLocaleString('ru');
         contentItem.classList.add('content-item');
-        contentItem.setAttribute('messageId', data.id);
+        if (id) {
+            contentItem.setAttribute('messageId', id);
+        }
+        else {
+            contentItem.setAttribute('messageId', data.id);
+        }
         contentText.classList.add('content-text');
         contentTextValue.classList.add('content-text-value');
         contentDate.classList.add('content-item-date');
@@ -98,12 +103,7 @@ class MessageBuilder {
         contentText.appendChild(contentTextValue);
         contentText.appendChild(contentDate);
         contentItem.appendChild(contentText);
-        if (!history) {
-            this.contentWrap.appendChild(contentItem);
-        }
-        else {
-            this.contentWrap.insertBefore(contentItem, this.contentWrap.firstElementChild)
-        }
+        this.contentWrap.insertBefore(contentItem, this.contentWrap.firstElementChild);
     }
 
 }

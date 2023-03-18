@@ -39,21 +39,27 @@ class FromInput {
 
     inputAccept = (e) => {
         const inputValue = e.target.value;
+        const actualMessages = [];
         const data = {}
 
         if (e.key === 'Enter' && inputValue !== '' && inputValue.trim() !== '') {
-            data.id = this.lastMessageId;
-            const inputType = this.validateMainInput(inputValue);
-            const lastItem = this.contentColumn.lastChild;
-            data.type = inputType;
-            data.name = inputValue;
-            data.value = inputValue;
-            data.date = new Date().getTime();
-            this.builder.createMessage(data);
-            this.wsServer.send(JSON.stringify(data));
-            this.mainInput.value = '';
-            if (lastItem.lastChild) lastItem.scrollIntoView(true);
+            fetch('http://localhost:7070/messages/lastid', { method: 'GET'})
+            .then((response) => response.json())
+            .then((data) => {
+                const inputType = this.validateMainInput(inputValue);
+                const lastItem = this.contentColumn.lastChild;
+                data.id = data.lastId;
+                data.type = inputType;
+                data.name = inputValue;
+                data.value = inputValue;
+                data.date = new Date().getTime();
+                this.builder.createMessage(data);
+                console.log(data)
+                this.wsServer.send(JSON.stringify(data));
 
+                this.mainInput.value = '';
+                if (lastItem.lastChild) lastItem.scrollIntoView(true);
+            });
         }
     }
 

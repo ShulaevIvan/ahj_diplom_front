@@ -47,8 +47,6 @@ class lazyLoad {
             if (response.status === 200) return response.json();
         })
         .then((data) => {
-
-
             const allMsg = data.messages;
             allMsg.forEach((msgObj) => {
                 this.counter += 1;
@@ -59,14 +57,11 @@ class lazyLoad {
                 else if (this.audioTypes.includes(msgObj.data.type) || this.videoTypes.includes(msgObj.data.type) && this.counter <= 10) {
                     const reader = new FileReader();
                     msgObj.data.value = msgObj.data.file;
-                    messageBuilder.createMessage(msgObj.data);
+                    messageBuilder.createMessage(msgObj.data, msgObj.data.id );
                 }
             });
-            
+
             if (allMsg.length >= 1)  this.contentColumn.lastChild.scrollIntoView();
-            
-          
-            
         })
     }
 

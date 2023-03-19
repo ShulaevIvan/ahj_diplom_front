@@ -27,12 +27,9 @@ class MessageBuilder {
         const contentDate = document.createElement('div');
         const date = new Date(data.date).toLocaleString('ru');
         contentItem.classList.add('content-item');
-        if (id) {
-            contentItem.setAttribute('messageId', id);
-        }
-        else {
-            contentItem.setAttribute('messageId', data.id);
-        }
+
+        id ? contentItem.setAttribute('messageId', id): contentItem.setAttribute('messageId', data.id);
+
         contentText.classList.add('content-text');
         contentTextValue.classList.add('content-text-value');
         contentDate.classList.add('content-item-date');
@@ -103,7 +100,7 @@ class MessageBuilder {
         contentText.appendChild(contentTextValue);
         contentText.appendChild(contentDate);
         contentItem.appendChild(contentText);
-        if (history) {
+        if (data && history) {
             this.contentWrap.insertBefore(contentItem, this.contentWrap.firstElementChild);
         }
         else {

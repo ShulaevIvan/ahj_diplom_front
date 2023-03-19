@@ -36,7 +36,9 @@ class lazyLoad {
                     'Content-Type': 'application/json;charset=utf-8',
                 },
             })
-            .then((response) => response.json())
+            .then((response) =>  {
+                if (response.status === 200) return response.json();
+            })
             .then((data) => {
                 data.history.forEach((item) => {
                     this.bulder.createMessage(item.data, item.data.id, true);
@@ -49,7 +51,7 @@ class lazyLoad {
     }
 
     loadMessages() {
-        const req = fetch('http://localhost:7070/messages/', {
+        const req = fetch('http://localhost:7070/messages/last', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8'
@@ -62,15 +64,13 @@ class lazyLoad {
             const allMsg = data.messages;
             allMsg.forEach((msgObj) => {
                 this.counter += 1;
-                console.log(msgObj.data)
-
                 if (this.imageTypes.includes(msgObj.data.type) || msgObj.data.type === 'text' && this.counter <= 10) {
                     messageBuilder.createMessage(msgObj.data);
                 }
                 else if (this.audioTypes.includes(msgObj.data.type) || this.videoTypes.includes(msgObj.data.type) && this.counter <= 10) {
                     const reader = new FileReader();
                     msgObj.data.value = msgObj.data.file;
-                    messageBuilder.createMessage(msgObj.data, msgObj.data.id );
+                    messageBuilder.createMessage(msgObj.data, msgObj.data.id);
                 }
             });
 

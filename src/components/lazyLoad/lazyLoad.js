@@ -9,13 +9,14 @@ class lazyLoad {
         this.videoTypes = ['video/mp4', 'video/ogg', 'video/webm'];
         this.imageTypes = ['image/apng', 'image/avif', 'image/gif', 'image/jpeg', 'image/png', 'image/svg+xml', 'image/webp'];
         this.counter = 0;
+        this.hidenMessages = [];
         this.contentColumn.addEventListener('scroll', this.loadHistory);
     }
 
     loadHistory = (e) => {
+        this.oldHistory = undefined;
         if (this.contentColumn.scrollTop === 0) {
             const displayingMsg = Array.from(this.contentColumn.querySelectorAll('.content-item'));
-            const first = displayingMsg[0];
             const displayingIds = [];
 
             if (displayingMsg.length < 10) return;
@@ -40,13 +41,12 @@ class lazyLoad {
                 if (response.status === 200) return response.json();
             })
             .then((data) => {
-                data.history.forEach((item) => {
-                    this.bulder.createMessage(item.data, item.data.id, true);
-                })
-            })
-
-
-            console.log(displayingMsg.length)
+                if (data.history.length <= 10) {
+                    data.history.forEach((item) => {
+                        this.bulder.createMessage(item.data, item.data.id, true);
+                    });
+                }
+            });
         }
     }
 
@@ -64,7 +64,7 @@ class lazyLoad {
             const allMsg = data.messages;
             allMsg.forEach((msgObj) => {
                 this.counter += 1;
-                if (this.imageTypes.includes(msgObj.data.type) || msgObj.data.type === 'text' && this.counter <= 10) {
+                if (this.imageTypes.includes(msgObj.data.type) || msgObj.data.type === 'text' || msgObj.data.type === 'url' && this.counter <= 10) {
                     messageBuilder.createMessage(msgObj.data);
                 }
                 else if (this.audioTypes.includes(msgObj.data.type) || this.videoTypes.includes(msgObj.data.type) && this.counter <= 10) {

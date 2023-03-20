@@ -10,7 +10,7 @@ class MessageBuilder {
         e.preventDefault();
         const link = document.createElement('a');
         const name = e.target.getAttribute('name');
-        link.href = e.target.href
+        e.target.classList.contains('img-download') ? link.href = e.target.src : link.href = e.target.href;
         link.rel = 'noopener';
         link.download = name;
         link.click();
@@ -39,23 +39,31 @@ class MessageBuilder {
             contentTextValue.innerHTML = link;
         }
         else if (imageTypes.includes(data.type)) {
-            const img = document.createElement('img');
-            img.setAttribute('src', data.value);
-            img.setAttribute('name', data.name);
-            this.file = data;
-            img.addEventListener('click', this.downloadFile);
-            contentTextValue.appendChild(img);
+            const fileName = data.name;
+            fetch(data.file)
+            .then(response => response.blob())
+            .then((blobData) => {
+                const blob = URL.createObjectURL(blobData)
+                const img = document.createElement('img');
+                img.setAttribute('src', blob);
+                img.setAttribute('href', blob);
+                img.setAttribute('name', fileName);
+                img.classList.add('img-download');
+                this.file = data;
+                img.addEventListener('click', this.downloadFile);
+                contentTextValue.appendChild(img);
+            })
         }
         else if (audioTypes.includes(data.type)) {
             const audio = document.createElement('audio');
             const downloadBtn = document.createElement('a');
             downloadBtn.classList.add('download-btn');
-            downloadBtn.href = data.value;
+            downloadBtn.href = data.file;
             downloadBtn.setAttribute('target', 'blank');
             downloadBtn.setAttribute('name', data.name);
             audio.setAttribute('controls', 'nodownload');
             audio.setAttribute('controlsList', 'nodownload');
-            audio.src = data.value;
+            audio.src = data.file;
             downloadBtn.addEventListener('click', this.downloadFile);
             contentTextValue.appendChild(audio);
             contentTextValue.appendChild(downloadBtn);
@@ -64,11 +72,11 @@ class MessageBuilder {
             const video = document.createElement('video');
             const downloadBtn = document.createElement('a');
             downloadBtn.classList.add('download-btn');
-            downloadBtn.href = data.value;
+            downloadBtn.href = data.file;
             downloadBtn.setAttribute('target', 'blank');
             downloadBtn.setAttribute('name', data.name);
             const source = document.createElement('source');
-            source.src = data.value;
+            source.src = data.file;
             source.type = 'video/webm';
             source.setAttribute('codecs', 'avc1.42E01E')
             video.appendChild(source);

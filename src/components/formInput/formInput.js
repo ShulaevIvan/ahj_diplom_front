@@ -39,8 +39,6 @@ class FromInput {
 
     inputAccept = (e) => {
         const inputValue = e.target.value;
-        const actualMessages = [];
-        const data = {}
 
         if (e.key === 'Enter' && inputValue !== '' && inputValue.trim() !== '') {
             fetch('http://localhost:7070/messages/lastid', { method: 'GET'})
@@ -48,6 +46,7 @@ class FromInput {
             .then((data) => {
                 this.lastMessageId = data.lastId;
                 const inputType = this.validateMainInput(inputValue);
+                console.log(inputValue)
                 const lastItem = this.contentColumn.lastChild;
                 data.id = this.lastMessageId,
                 data.type = inputType;
@@ -66,25 +65,15 @@ class FromInput {
     fileLoad = (e) => {
         const file = e.srcElement.files[0];
         if (!file) return
-        const url = URL.createObjectURL(file);
-        let data = {}
-        if (file.type === 'image/png' || file.type === 'image/jpeg' || file.type === 'image/jpg' || file.type === 'text') {
-            data = {
-                id: this.lastMessageId,
-                type: file.type,
-                name: file.name,
-                value: url,
-                file: file,
-                date: new Date().getTime()
-            }
-            this.builder.createMessage(data)
-            this.wsServer.send(JSON.stringify(data));
-        }
-        else {
+        fetch('http://localhost:7070/messages/lastid', { method: 'GET'})
+        .then((response) => response.json())
+        .then((dataId) => {
+            this.lastMessageId = dataId.lastId
+            const url = URL.createObjectURL(file);
+            let data = {}
             e.preventDefault();
             this.getBase64(file, url);
-        }
-
+        });
     }
 
     getBase64(file, url) {

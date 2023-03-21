@@ -73,9 +73,11 @@ class lazyLoad {
                     messageBuilder.createMessage(msgObj.data, msgObj.data.id);
                 }
             });
-
-            if (allMsg.length >= 1)  this.contentColumn.lastChild.scrollIntoView();
-        })
+            setTimeout(() => {
+                const dispMsg = Array.from(this.contentColumn.querySelectorAll('.content-item'));
+                if (dispMsg.length > 0) dispMsg[dispMsg.length-1].scrollIntoView();
+            }, 200);
+        });
     }
 
     countMessages() {

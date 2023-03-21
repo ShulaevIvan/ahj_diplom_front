@@ -1,0 +1,56 @@
+import MessageBuilder from '../messageBuilder/messageBuilder';
+
+export default class Search {
+    constructor(appTag) {
+        this.mainContainer = document.querySelector(appTag);
+        this.contentColumn = this.mainContainer.querySelector('.content-column');
+        this.builder = MessageBuilder;
+        this.displayedMessages = undefined;
+        this.searchInput = this.mainContainer.querySelector('.search-input');
+
+        this.searchInput.addEventListener('input', this.findMatches);
+        this.searchInput.addEventListener('click', this.clearInput);
+
+    }
+
+    findMatches = (e) => {
+        const target = e.target;
+        target.removeEventListener('input', this.findMatches);
+        this.displayedMessages = Array.from(this.mainContainer.querySelectorAll('.content-item'));
+        if (this.displayedMessages.length === 0) return
+        
+        setTimeout(() => {
+            const inputValue = target.value.trim();
+            fetch(`http://localhost:7070/messages/search?text=${inputValue}`, {method: 'GET'})
+            .then((response) => {
+                if (response.status === 200) {
+                    return response.json()
+                }
+            })
+            .then((data) => {
+                if (data.messages.length > 0) {
+                    this.displayedMessages.forEach((item) => item.remove());
+                    data.messages.forEach((message) => {
+                        this.builder.createMessage(message.data, message.data.id)
+                    });
+                    target.addEventListener('input', this.findMatches);
+                }
+                else {
+                    target.addEventListener('input', this.findMatches);
+                    return
+                }
+            })
+        }, 300)
+        
+    }
+
+    clearInput = (e) => {
+        this.searchInput.value = '';
+        // if (this.displayedMessages !== undefined) {
+        //     console.log(this.displayedMessages)
+        //     this.displayedMessages.forEach((item) => {
+        //         this.contentColumn.appendChild(item)
+        //     })
+        // }
+    }
+}

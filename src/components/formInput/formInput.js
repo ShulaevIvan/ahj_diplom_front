@@ -46,7 +46,6 @@ class FromInput {
             .then((data) => {
                 this.lastMessageId = data.lastId;
                 const inputType = this.validateMainInput(inputValue);
-                console.log(inputValue)
                 const lastItem = this.contentColumn.lastChild;
                 data.id = this.lastMessageId,
                 data.type = inputType;
@@ -68,11 +67,12 @@ class FromInput {
         fetch('http://localhost:7070/messages/lastid', { method: 'GET'})
         .then((response) => response.json())
         .then((dataId) => {
+            e.preventDefault();
             this.lastMessageId = dataId.lastId
             const url = URL.createObjectURL(file);
-            let data = {}
-            e.preventDefault();
             this.getBase64(file, url);
+            
+            
         });
     }
 
@@ -80,6 +80,7 @@ class FromInput {
         const reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onload = () => {
+            const lastItem = this.contentColumn.lastChild;
             const data = {
                 id: this.lastMessageId,
                 type: file.type,
@@ -90,6 +91,7 @@ class FromInput {
             }
             this.builder.createMessage(data)
             this.wsServer.send(JSON.stringify(data));
+            if (lastItem.lastChild) lastItem.scrollIntoView(true);
         };
         reader.onerror = (error) => {
           console.log('Error: ', error);

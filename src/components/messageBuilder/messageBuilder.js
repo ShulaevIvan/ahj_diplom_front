@@ -116,6 +116,63 @@ class MessageBuilder {
         }
     }
 
+    displayWeather(data) {
+        const allDays = ['пн', 'вт', 'ср', 'чт', 'пт', 'cб', 'вс'];
+        const allMonth = ['Янв', 'Фев', 'Март', 'Апрель', 'Май', 
+                         'Июнь', 'Июль', 'Август', 'Сентябрь', 
+                         'Октябрь', 'Ноябрь', 'Ноябрь', 'Декабрь',
+        ];
+        const contentItem = document.createElement('div');
+        const weatherWrap = document.createElement('div');
+        const weatherDate = document.createElement('div');
+        const weatherTemp = document.createElement('div');
+        const weatherWind = document.createElement('div');
+        const weatherDateDay = document.createElement('span');
+        const weatherMonth = document.createElement('span');
+        const weatherYear = document.createElement('span');
+
+        weatherDateDay.textContent = `${allDays[data.weather.day]}`;
+        weatherMonth.textContent = `${allMonth[data.weather.month]}`
+        weatherYear.textContent = `${data.weather.year}`;
+        weatherTemp.textContent = `температура ${data.weather.temp} °C`;
+        weatherWind.textContent = `ветер ${data.weather.wind} м/с`;
+
+        contentItem.classList.add('content-item');
+        weatherWrap.classList.add('weather-wrap');
+        weatherDate.classList.add('weather-date');
+        weatherTemp.classList.add('weather-temp');
+        weatherTemp.classList.add('weather-wind');
+
+        contentItem.setAttribute('command', true)
+
+        weatherDate.appendChild(weatherDateDay);
+        weatherDate.appendChild(weatherMonth);
+        weatherDate.appendChild(weatherYear);
+
+        weatherWrap.appendChild(weatherDate);
+        weatherWrap.appendChild(weatherTemp);
+        weatherWrap.appendChild(weatherWind);
+        contentItem.appendChild(weatherWrap);
+        this.contentWrap.appendChild(contentItem)
+        
+
+        const resultDate = new Date(data.weather.year, data.weather.month, data.weather.day).toLocaleDateString();
+    }
+
+    displayTime(data) {
+        const contentItem = document.createElement('div');
+        const timeWrap = document.createElement('div');
+
+        contentItem.classList.add('content-item');
+        timeWrap.classList.add('time-wrap')
+
+        contentItem.setAttribute('command', true)
+        timeWrap.textContent = data.localTime;
+
+        contentItem.appendChild(timeWrap);
+        this.contentWrap.appendChild(contentItem);
+    }
+
 }
 
 const messageBuilder = new MessageBuilder('.app-container');

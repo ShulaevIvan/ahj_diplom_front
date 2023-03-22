@@ -10,6 +10,7 @@ export default class Search {
 
         this.searchInput.addEventListener('input', this.findMatches);
         this.searchInput.addEventListener('click', this.clearInput);
+        this.searchInput.addEventListener('keydown', this.backspaceKeyEvent);
 
     }
 
@@ -46,11 +47,27 @@ export default class Search {
 
     clearInput = (e) => {
         this.searchInput.value = '';
-        // if (this.displayedMessages !== undefined) {
-        //     console.log(this.displayedMessages)
-        //     this.displayedMessages.forEach((item) => {
-        //         this.contentColumn.appendChild(item)
-        //     })
-        // }
+        if (this.displayedMessages !== undefined) {
+            const currentMessages = this.mainContainer.querySelectorAll('.content-item');
+            if (currentMessages.length > 0) currentMessages.forEach((msg) => msg.remove());
+
+            this.displayedMessages.forEach((item) => {
+                this.contentColumn.appendChild(item)
+            });
+        }
+    }
+
+    backspaceKeyEvent = (e) => {
+        if (e.keyCode === 8) this.searchInput.value = '';
+        const currentMessages = this.mainContainer.querySelectorAll('.content-item');
+        
+        if (this.displayedMessages !== undefined) {
+            const currentMessages = this.mainContainer.querySelectorAll('.content-item');
+            if (currentMessages.length > 0) currentMessages.forEach((msg) => msg.remove());
+
+            this.displayedMessages.forEach((item) => {
+                this.contentColumn.appendChild(item)
+            });
+        }
     }
 }

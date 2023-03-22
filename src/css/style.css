@@ -192,3 +192,30 @@
     font-size: 40px;
     margin-right: 5px;
 }
+
+.weather-wrap {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    background-color: orange;
+    min-height: 25px;
+    align-items: center;
+}
+.weather-date, .weather-temp, .weather-wind {
+    display: flex;
+    flex-wrap: wrap;
+    width: 33%;
+}
+.weather-date span {
+    margin: 0 2px;
+}
+.time-wrap {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    min-height: 25px;
+    align-items: center;
+    background-color: orange;
+}

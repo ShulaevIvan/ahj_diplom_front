@@ -39,6 +39,8 @@ class FromInput {
 
     inputAccept = (e) => {
         const inputValue = e.target.value;
+        const checkCommand = /^@chaos:/g
+        if (inputValue.match(checkCommand)) return;
 
         if (e.key === 'Enter' && inputValue !== '' && inputValue.trim() !== '') {
             fetch('http://localhost:7070/messages/lastid', { method: 'GET'})

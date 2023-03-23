@@ -64,10 +64,16 @@ class lazyLoad {
             const allMsg = data.messages;
             allMsg.forEach((msgObj) => {
                 this.counter += 1;
+                console.log(msgObj)
                 if (this.imageTypes.includes(msgObj.data.type) || msgObj.data.type === 'text' || msgObj.data.type === 'url' && this.counter <= 10) {
                     messageBuilder.createMessage(msgObj.data);
                 }
                 else if (this.audioTypes.includes(msgObj.data.type) || this.videoTypes.includes(msgObj.data.type) && this.counter <= 10) {
+                    const reader = new FileReader();
+                    msgObj.data.value = msgObj.data.file;
+                    messageBuilder.createMessage(msgObj.data, msgObj.data.id);
+                }
+                else if (!this.audioTypes.includes(msgObj.data.type) || !this.videoTypes.includes(msgObj.data.type) && this.counter <= 10) {
                     const reader = new FileReader();
                     msgObj.data.value = msgObj.data.file;
                     messageBuilder.createMessage(msgObj.data, msgObj.data.id);

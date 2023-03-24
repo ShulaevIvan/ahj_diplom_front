@@ -3,6 +3,9 @@ class MessageBuilder {
         this.mainTag = document.querySelector('.app-container');
         this.contentWrap = this.mainTag.querySelector('.content-column');
         this.file = undefined;
+        this.audioTypes = ['audio/ogg', 'audio/wav', 'audio/mp3', 'audio/mpeg'];
+        this.videoTypes = ['video/mp4', 'video/ogg', 'video/webm'];
+        this.imageTypes = ['image/apng', 'image/avif', 'image/gif', 'image/jpeg', 'image/png', 'image/svg+xml', 'image/webp'];
         this.downloadFile = this.downloadFile.bind(this);
     }
 
@@ -17,10 +20,7 @@ class MessageBuilder {
     }
       
 
-    createMessage(data, id, history = false) {
-        const audioTypes = ['audio/ogg', 'audio/wav', 'audio/mp3', 'audio/mpeg'];
-        const videoTypes = ['video/mp4', 'video/ogg', 'video/webm'];
-        const imageTypes = ['image/apng', 'image/avif', 'image/gif', 'image/jpeg', 'image/png', 'image/svg+xml', 'image/webp']
+    createMessage(data, id, history = false, command = false) {
         const contentItem = document.createElement('div');
         const contentText = document.createElement('div');
         const contentTextValue = document.createElement('div');
@@ -38,7 +38,7 @@ class MessageBuilder {
             const link = `<a href="${data.value}" target="_blank"> ${data.value}</a>`;
             contentTextValue.innerHTML = link;
         }
-        else if (imageTypes.includes(data.type)) {
+        else if (this.imageTypes.includes(data.type)) {
             const fileName = data.name;
             fetch(data.file)
             .then(response => response.blob())
@@ -54,7 +54,7 @@ class MessageBuilder {
                 contentTextValue.appendChild(img);
             })
         }
-        else if (audioTypes.includes(data.type)) {
+        else if (this.audioTypes.includes(data.type)) {
             const audio = document.createElement('audio');
             const downloadBtn = document.createElement('a');
             downloadBtn.classList.add('download-btn');
@@ -68,7 +68,7 @@ class MessageBuilder {
             contentTextValue.appendChild(audio);
             contentTextValue.appendChild(downloadBtn);
         }
-        else if (videoTypes.includes(data.type)) {
+        else if (this.videoTypes.includes(data.type)) {
             const video = document.createElement('video');
             const downloadBtn = document.createElement('a');
             downloadBtn.classList.add('download-btn');
@@ -94,26 +94,29 @@ class MessageBuilder {
             const fileIcon = document.createElement('span');
             const downloadBtn = document.createElement('a');
             downloadBtn.classList.add('download-btn');
-            downloadBtn.href = data.value;
+            if (command) {
+                contentItem.setAttribute('command', true);
+                downloadBtn.href = data.file
+            }
+            else {
+                downloadBtn.href = data.value;
+            }
             downloadBtn.setAttribute('target', 'blank');
             downloadBtn.setAttribute('name', data.name);
-            fileIcon.setAttribute('name', data.name.replace(/\s/g, ''));
+            fileIcon.setAttribute('name', data.name.replace(/\s/g, ''))
             fileIcon.classList.add('document-icon');
             fileIcon.textContent = data.name;
             contentTextValue.appendChild(fileIcon);
             contentTextValue.appendChild(downloadBtn)
             downloadBtn.addEventListener('click', this.downloadFile);
         }
+
         contentDate.textContent = date;
         contentText.appendChild(contentTextValue);
         contentText.appendChild(contentDate);
         contentItem.appendChild(contentText);
-        if (data && history) {
-            this.contentWrap.insertBefore(contentItem, this.contentWrap.firstElementChild);
-        }
-        else {
-            this.contentWrap.appendChild(contentItem)
-        }
+        data && history ? this.contentWrap.insertBefore(contentItem, this.contentWrap.firstElementChild) : this.contentWrap.appendChild(contentItem);
+
     }
 
     displayWeather(data) {
@@ -172,6 +175,15 @@ class MessageBuilder {
         contentItem.appendChild(timeWrap);
         this.contentWrap.appendChild(contentItem);
     }
+
+    displayFiles(data) {
+        console.log(data)
+        const contentItem = document.createElement('div');
+        const contentText = document.createElement('div');
+        const contentTextValue = document.createElement('div');
+        const contentDate = document.createElement('div');
+    }
+
 
 }
 

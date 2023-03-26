@@ -14,16 +14,20 @@ class FromInput {
 
         this.inputAccept = this.inputAccept.bind(this);
         this.validateMainInput = this.validateMainInput.bind(this);
+        this.getBase64 = this.getBase64.bind(this);
         this.openWs = this.openWs.bind(this);
         this.closeWs = this.closeWs.bind(this);
         this.messageWs = this.messageWs.bind(this);
         this.fileLoad = this.fileLoad.bind(this);
+        this.dropEvent = this.dropEvent.bind(this)
 
         this.wsServer.addEventListener('open', this.openWs);
         this.wsServer.addEventListener('close', this.closeWs);
         this.wsServer.addEventListener('message', this.messageWs);
         this.mainInput.addEventListener('keydown', this.inputAccept);
         this.fileInput.addEventListener('change', this.fileLoad);
+        this.contentColumn.addEventListener('dragover', this.dragEvent);
+        this.contentColumn.addEventListener('drop',  this.dropEvent);
 
     }
     openWs = (e) => {
@@ -54,7 +58,7 @@ class FromInput {
                 data.name = inputValue;
                 data.value = inputValue;
                 data.date = new Date().getTime();
-                this.builder.createMessage(data, this.lastMessageId);
+                this.builder.createMessage(data);
                 this.wsServer.send(JSON.stringify(data));
 
                 this.mainInput.value = '';
@@ -73,18 +77,17 @@ class FromInput {
             this.lastMessageId = dataId.lastId
             const url = URL.createObjectURL(file);
             this.getBase64(file, url);
-            
-            
         });
     }
 
-    getBase64(file, url) {
+    getBase64 = (file, url) => {
+        const id = this.lastMessageId
         const reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onload = () => {
             const lastItem = this.contentColumn.lastChild;
             const data = {
-                id: this.lastMessageId,
+                id: id,
                 type: file.type,
                 name: file.name,
                 value: url,
@@ -114,6 +117,24 @@ class FromInput {
         else if (!catchImg.test(inputData) && !catchUrl.test(inputData)) {
             return 'text'
         }
+    }
+
+    dragEvent = (e) => {
+        e.preventDefault();
+    }
+    dropEvent = (e) => {
+        e.preventDefault();
+        const files = Array.from(e.dataTransfer.files);
+        files.forEach((file) => {
+            fetch('http://localhost:7070/messages/lastid', { method: 'GET'})
+            .then((response) => { if (response.status === 200) return response.json() })
+            .then((data) => {
+                this.lastMessageId = data.lastId;
+                const url = URL.createObjectURL(file);
+                this.getBase64(file, url)
+            });
+            
+        });
     }
 }
 

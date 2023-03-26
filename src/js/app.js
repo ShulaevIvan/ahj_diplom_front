@@ -8,7 +8,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const url = 'http://localhost:7070';
     const lLoad = new lazyLoad(url);
     const search = new Search('.app-container');
-    const commands = new Commands('.app-container')
+    const commands = new Commands('.app-container');
     lLoad.loadMessages();
 
 });

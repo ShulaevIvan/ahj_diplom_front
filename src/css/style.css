@@ -81,10 +81,10 @@
 .upload-icon::before {
     position: absolute;
     content: '\1F4CE';
-    font-size: 20px;
+    font-size: 18px;
     min-width: 25px;
     min-height: 30px;
-    top: 0.5%;
+    top: 10%;
     right: 15%;
     pointer-events: none;
     cursor: pointer;
@@ -99,6 +99,7 @@
     content: '\1F399';
     top: 0.5%;
     right: 7%;
+    width: 8px;
     cursor: pointer;
 }
 .main-input-item {
@@ -120,6 +121,7 @@
     min-height: 35px;
 }
 .hidden-upload-btn {
+    cursor: pointer;
     min-width: 30px;
     min-height: 30px;
     max-width: 30px;
@@ -129,7 +131,6 @@
     right: 15%;
     opacity: 0.0;
     z-index: 3;
-    cursor: pointer;
 }
 .hidden-upload-btn:hover {
     cursor: pointer;
@@ -218,4 +219,53 @@
     min-height: 25px;
     align-items: center;
     background-color: orange;
+}
+.upload-mic-wrap {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 20%;
+}
+.upload-icon-wrap {
+    cursor: pointer;
+    display: flex;
+    width: 25%;
+    justify-content: center;
+    align-items: center;
+}
+.mic-wrap {
+    display: flex;
+    position: relative;
+    width: 70%;
+    justify-content: center;
+    align-items: center;
+}
+.mic-icon-wrap {
+    position: absolute;
+    top: -13px;
+    display: flex;
+}
+.mic-ok-btn::before {
+    content: '\2713';
+    font-size: 22px;
+    cursor: pointer;
+}
+.mic-cancel-btn::before {
+    content: '\274C';
+    font-size: 22px;
+    cursor: pointer;
+}
+
+.mic-ok-btn {
+    left: 0;
+    position: absolute;
+
+}
+.mic-cancel-btn {
+    right: 0;
+    position: absolute;
+}
+.hide-mic-timer, .hide-mic-control, .hide-mic {
+    display: none;
 }

@@ -19,7 +19,7 @@ class FromInput {
         this.closeWs = this.closeWs.bind(this);
         this.messageWs = this.messageWs.bind(this);
         this.fileLoad = this.fileLoad.bind(this);
-        this.dropEvent = this.dropEvent.bind(this)
+        this.dropEvent = this.dropEvent.bind(this);
 
         this.wsServer.addEventListener('open', this.openWs);
         this.wsServer.addEventListener('close', this.closeWs);
@@ -136,6 +136,8 @@ class FromInput {
             
         });
     }
+
+
 }
 
 export default FromInput

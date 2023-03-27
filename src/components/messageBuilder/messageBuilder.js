@@ -183,8 +183,6 @@ class MessageBuilder {
         const contentTextValue = document.createElement('div');
         const contentDate = document.createElement('div');
     }
-
-
 }
 
 const messageBuilder = new MessageBuilder('.app-container');

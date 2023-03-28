@@ -136,7 +136,9 @@
     cursor: pointer;
 }
 .content-item {
+    cursor: pointer;
     flex-direction: column;
+    position: relative;
     display: flex;
     flex-wrap: wrap;
     justify-content: right;
@@ -151,16 +153,17 @@
     background-color: wheat;
     display: flex;
     text-align: right;
-    width: 60%;
+    width: 100%;
 }
 .content-text-value {
-    display: flex;
+    display: inline-flex;
     text-align: right;
     padding: 10px;
     margin-bottom: 10px;
     flex-wrap: wrap;
+    word-wrap: break-word;
     width: 100%;
-    justify-content: flex-end;
+    justify-content: flex-start;
 }
 .content-text-value img {
     max-width: 250px;
@@ -168,9 +171,8 @@
     cursor: pointer;
 }
 .content-text-value video,  .content-text-value audio {
-    max-width: 300px;
-    max-height: 300px;
-    width: 90%;
+    padding: 10px 0;
+    width: 85%;
 }
 .content-item-date {
     padding: 0 10px;
@@ -179,10 +181,12 @@
 }
 .download-btn {
     display: flex;
-    width: 10%;
-    justify-content: right;
+    width: 15%;
+    max-height: 50px;
+    justify-content: center;
     text-decoration: none;
     cursor: pointer;
+    padding: 10px 0;
 }
 .download-btn::before {
     content: '\2193';
@@ -190,7 +194,7 @@
 }
 .document-icon::before {
     content: '\1F5CE';
-    font-size: 40px;
+    font-size: 50px;
     margin-right: 5px;
 }
 
@@ -268,4 +272,106 @@
 }
 .hide-mic-timer, .hide-mic-control, .hide-mic {
     display: none;
+}
+.pinned-icon::before {
+    position: absolute;
+    right: 25%;
+    content: '\1F4CC';
+    top: 0;
+}
+.pinned-hidden {
+    display: none;
+}
+.pinned-show {
+    display: flex;
+    min-height: 50px;
+    height: 50px;
+}
+.pinned-wrap {
+    top: 0;
+    position: sticky;
+    width: 100%;
+    z-index: 2;
+}
+.pinned-item {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    background-color: cornflowerblue;
+}
+.pinned-item-max {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    min-height: 200px;
+    background-color: cornflowerblue;
+}
+.pinned-media {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 20%;
+    /* max-height: 50px; */
+}
+.pinned-media video, .pinned-media img {
+    max-height: 40px;
+}
+.pinned-media audio {
+    max-height: 35px;
+}
+.pinned-media-full {
+    justify-content: revert;
+}
+.pinned-media-full audio {
+    min-width: 200px;
+}
+.pinned-media-full video {
+    max-height: 200px;
+
+}
+.pinned-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50%;
+    max-width: 70%;
+    overflow: hidden;
+    max-height: 50px;
+    cursor: pointer;
+}
+.pinned-content-full {
+    overflow: visible;
+    max-height: 200px;
+}
+.pinned-date {
+    display: flex;
+    width: 20%;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+.pinned-link {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 10%;
+}
+.pinned-link-item::before {
+    content: '\2193';
+    font-size: 24px;
+    cursor: pointer;
+}
+.pinned-item .content-text {
+    width: 100%;
+    min-height: 50px;
+}
+.msg-name {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    margin: 10px 0;
 }

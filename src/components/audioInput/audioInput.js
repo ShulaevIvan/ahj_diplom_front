@@ -58,7 +58,7 @@ export default class AudioInput {
             this.soundController.addEventListener('stop', (e) => {
                 const blob = new Blob(soundByteArr);
                 this.soundData = URL.createObjectURL(blob);
-                const file = new File([blob], `file_${new Date().toLocaleDateString()}`, {type:'audio/ogg'}, {lastModified: new Date().getTime()});
+                const file = new File([blob], `voise_message_${new Date().toLocaleDateString()}`, {type:'audio/ogg'}, {lastModified: new Date().getTime()});
                 const reader = new FileReader();
                 reader.readAsDataURL(file);
                 reader.onload = () => {

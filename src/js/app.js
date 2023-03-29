@@ -10,7 +10,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const lLoad = new lazyLoad(url);
     const search = new Search('.app-container');
     const commands = new Commands('.app-container');
-    const audioInput = new AudioInput('.app-container')
+    const audioInput = new AudioInput('.app-container');
     lLoad.loadMessages();
 
 });

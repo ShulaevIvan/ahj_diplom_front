@@ -1,4 +1,5 @@
 import messageBuilder from '../messageBuilder/messageBuilder'
+import pinnedMessage from '../pinnedMessage/pinnedMessage';
 
 class lazyLoad {
     constructor(url) {
@@ -10,6 +11,7 @@ class lazyLoad {
         this.imageTypes = ['image/apng', 'image/avif', 'image/gif', 'image/jpeg', 'image/png', 'image/svg+xml', 'image/webp'];
         this.counter = 0;
         this.hidenMessages = [];
+        this.pinnedMessage = pinnedMessage;
         this.contentColumn.addEventListener('scroll', this.loadHistory);
     }
 
@@ -62,21 +64,25 @@ class lazyLoad {
         })
         .then((data) => {
             const allMsg = data.messages;
+            let msg;
             allMsg.forEach((msgObj) => {
                 this.counter += 1;
-                console.log(msgObj)
+
                 if (this.imageTypes.includes(msgObj.data.type) || msgObj.data.type === 'text' || msgObj.data.type === 'url' && this.counter <= 10) {
-                    messageBuilder.createMessage(msgObj.data);
+                    msg = messageBuilder.createMessage(msgObj.data);
                 }
                 else if (this.audioTypes.includes(msgObj.data.type) || this.videoTypes.includes(msgObj.data.type) && this.counter <= 10) {
                     const reader = new FileReader();
                     msgObj.data.value = msgObj.data.file;
-                    messageBuilder.createMessage(msgObj.data, msgObj.data.id);
+                    msg = messageBuilder.createMessage(msgObj.data, msgObj.data.id);
                 }
                 else if (!this.audioTypes.includes(msgObj.data.type) || !this.videoTypes.includes(msgObj.data.type) && this.counter <= 10) {
                     const reader = new FileReader();
                     msgObj.data.value = msgObj.data.file;
-                    messageBuilder.createMessage(msgObj.data, msgObj.data.id);
+                    msg = messageBuilder.createMessage(msgObj.data, msgObj.data.id);
+                }
+                if (msgObj.data.pinned) {
+                    this.pinnedMessage.createPinnedMessage(msg);
                 }
             });
             setTimeout(() => {

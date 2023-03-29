@@ -1,5 +1,6 @@
 import '../messageBuilder/messageBuilder';
 import messageBuilder from '../messageBuilder/messageBuilder';
+import sidebarCategory from '../sidebarCategory/sidebarCategory';
 
 class FromInput {
     constructor(appTag) {
@@ -10,6 +11,7 @@ class FromInput {
         this.builder = messageBuilder;
         this.lastMessageId = undefined;
         this.serverUrl = 'ws://localhost:7070'
+        this.sidebar = sidebarCategory;
         this.wsServer = new WebSocket(this.serverUrl);
 
         this.inputAccept = this.inputAccept.bind(this);
@@ -58,6 +60,7 @@ class FromInput {
                 data.name = inputValue;
                 data.value = inputValue;
                 data.date = new Date().getTime();
+                sidebarCategory.addCouuntValue(data);
                 this.builder.createMessage(data);
                 this.wsServer.send(JSON.stringify(data));
 
@@ -94,6 +97,7 @@ class FromInput {
                 file: reader.result,
                 date: new Date().getTime()
             }
+            sidebarCategory.addCouuntValue(data);
             this.builder.createMessage(data)
             this.wsServer.send(JSON.stringify(data));
             if (lastItem.lastChild) lastItem.scrollIntoView(true);

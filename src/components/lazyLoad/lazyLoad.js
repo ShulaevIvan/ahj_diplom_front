@@ -1,11 +1,13 @@
 import messageBuilder from '../messageBuilder/messageBuilder'
 import pinnedMessage from '../pinnedMessage/pinnedMessage';
+import sidebarCategory from '../sidebarCategory/sidebarCategory';
 
-class lazyLoad {
+class LazyLoad {
     constructor(url) {
         this.contentColumn = document.querySelector('.content-column');
         this.serverUrl = url;
-        this.bulder = messageBuilder
+        this.bulder = messageBuilder;
+        this.sidebarCategory = sidebarCategory;
         this.audioTypes = ['audio/ogg', 'audio/wav', 'audio/mp3', 'audio/mpeg'];
         this.videoTypes = ['video/mp4', 'video/ogg', 'video/webm'];
         this.imageTypes = ['image/apng', 'image/avif', 'image/gif', 'image/jpeg', 'image/png', 'image/svg+xml', 'image/webp'];
@@ -13,9 +15,10 @@ class lazyLoad {
         this.hidenMessages = [];
         this.pinnedMessage = pinnedMessage;
         this.contentColumn.addEventListener('scroll', this.loadHistory);
+        this.sidebarCategory.resetBtns.forEach((restBtn) => restBtn.addEventListener('click', this.loadMessages))
     }
 
-    loadHistory = (e) => {
+    loadHistory = () => {
         this.oldHistory = undefined;
         if (this.contentColumn.scrollTop === 0) {
             const displayingMsg = Array.from(this.contentColumn.querySelectorAll('.content-item'));
@@ -52,7 +55,14 @@ class lazyLoad {
         }
     }
 
-    loadMessages() {
+    loadMessages = (e)=> {
+
+        if (e) {
+            const displayingMsg = Array.from(this.contentColumn.querySelectorAll('.content-item'));
+            const pinnedMssg = this.contentColumn.querySelector('.pinned-item')
+            pinnedMssg ? pinnedMssg.remove():
+            displayingMsg.forEach((item) => item.remove());
+        }
         const req = fetch('http://localhost:7070/messages/last', {
             method: 'GET',
             headers: {
@@ -67,6 +77,7 @@ class lazyLoad {
             let msg;
             allMsg.forEach((msgObj) => {
                 this.counter += 1;
+                this.sidebarCategory.addCouuntValue(msgObj.data)
 
                 if (this.imageTypes.includes(msgObj.data.type) || msgObj.data.type === 'text' || msgObj.data.type === 'url' && this.counter <= 10) {
                     msg = messageBuilder.createMessage(msgObj.data);
@@ -98,5 +109,6 @@ class lazyLoad {
     }
 
 }
+const lazyLoad = new LazyLoad('http://localhost:7070');
 
 export default lazyLoad

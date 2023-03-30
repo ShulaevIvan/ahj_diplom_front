@@ -60,9 +60,10 @@ class FromInput {
                 data.name = inputValue;
                 data.value = inputValue;
                 data.date = new Date().getTime();
-                sidebarCategory.addCouuntValue(data);
+
                 this.builder.createMessage(data);
                 this.wsServer.send(JSON.stringify(data));
+                sidebarCategory.addCouuntValue(data);
 
                 this.mainInput.value = '';
                 if (lastItem.lastChild) lastItem.scrollIntoView(true);
@@ -97,9 +98,9 @@ class FromInput {
                 file: reader.result,
                 date: new Date().getTime()
             }
-            sidebarCategory.addCouuntValue(data);
             this.builder.createMessage(data)
             this.wsServer.send(JSON.stringify(data));
+            sidebarCategory.addCouuntValue(data);
             if (lastItem.lastChild) lastItem.scrollIntoView(true);
         };
         reader.onerror = (error) => {

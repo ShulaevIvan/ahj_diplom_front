@@ -41,7 +41,7 @@ class MessageBuilder {
         msgName.classList.add('msg-name');
 
         if (data.type === 'url') {
-            const link = `<a href="${data.value}" target="_blank"> ${data.value}</a>`;
+            const link = `<a href="${data.name}" target="_blank"> ${data.name}</a>`;
             contentTextValue.innerHTML = link;
         }
         else if (this.imageTypes.includes(data.type)) {
@@ -172,6 +172,7 @@ class MessageBuilder {
         weatherWrap.appendChild(weatherWind);
         contentItem.appendChild(weatherWrap);
         this.contentWrap.appendChild(contentItem)
+        this.contentWrap.lastChild.scrollIntoView();
         
 
         const resultDate = new Date(data.weather.year, data.weather.month, data.weather.day).toLocaleDateString();

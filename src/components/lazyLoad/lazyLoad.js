@@ -78,8 +78,8 @@ class LazyLoad {
             allMsg.forEach((msgObj) => {
                 this.counter += 1;
                 this.sidebarCategory.addCouuntValue(msgObj.data)
-
                 if (this.imageTypes.includes(msgObj.data.type) || msgObj.data.type === 'text' || msgObj.data.type === 'url' && this.counter <= 10) {
+                    console.log(msgObj.data.value)
                     msg = messageBuilder.createMessage(msgObj.data);
                 }
                 else if (this.audioTypes.includes(msgObj.data.type) || this.videoTypes.includes(msgObj.data.type) && this.counter <= 10) {

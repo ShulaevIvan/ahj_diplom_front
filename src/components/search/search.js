@@ -52,8 +52,9 @@ export default class Search {
             if (currentMessages.length > 0) currentMessages.forEach((msg) => msg.remove());
 
             this.displayedMessages.forEach((item) => {
-                this.contentColumn.appendChild(item)
+                this.contentColumn.appendChild(item);
             });
+            this.contentColumn.lastChild.scrollIntoView();
         }
     }
 

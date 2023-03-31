@@ -3,6 +3,7 @@ import messageBuilder from '../messageBuilder/messageBuilder';
 class SideBarCategory {
     constructor(appTag) {
         this.appContainer = document.querySelector(appTag);
+        this.contentColumn = this.appContainer.querySelector('.content-column');
         this.sidebarColumn = this.appContainer.querySelector('.sidebar-column');
         this.sidebarTextBlockWrap = this.sidebarColumn.querySelector('.sidebar-text-message-count-wrap');
         this.sidebarImageBlockWrap = this.sidebarColumn.querySelector('.sidebar-image-message-count-wrap');
@@ -23,10 +24,9 @@ class SideBarCategory {
     }
 
     addCouuntValue(data) {
-        console.log(data)
         const messageType = data.type;
         let counterTag;
-        if (messageType === 'text') {
+        if (messageType === 'text' || messageType === 'url') {
             counterTag = 'text';
         }
         else if (this.imageTypes.includes(messageType)) {
@@ -48,7 +48,6 @@ class SideBarCategory {
     getCounterValue(type, tag) {
 
         const counterType = type;
-        console.log(`${this.serverUrl}messages/counter?type=${type}`)
 
         fetch(`${this.serverUrl}messages/counter?type=${type}`, { method: 'GET', headers: {
             "Content-Type": "application/json",
@@ -70,6 +69,7 @@ class SideBarCategory {
             data.messages.forEach((msg) =>  {
                 this.builder.createMessage(msg.data, msg.id);
             });  
+            this.contentColumn.lastChild.scrollIntoView();
         }));
     }
 

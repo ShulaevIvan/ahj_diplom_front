@@ -1,10 +1,12 @@
 import messageBuilder  from '../messageBuilder/messageBuilder';
+import lazyLoad from '../lazyLoad/lazyLoad';
 
 export default class Commands {
     constructor(appTag) {
         this.appContainer = document.querySelector(appTag);
         this.commandInput = this.appContainer.querySelector('.main-input');
-        this.allCommands = ['погода', 'время', 'очистить', 'документы', 'медиа'];
+        this.allCommands = ['погода', 'время', 'очистить', 'документы', 'медиа', 'геолокация'];
+        this.lazyLoad = lazyLoad;
         this.currentCommand = undefined;
         this.geolocation = undefined;
         
@@ -33,7 +35,7 @@ export default class Commands {
             }
         }
         else if (currentCommands.length > 0) {
-            window.location.reload();
+            lazyLoad.loadMessages();
         }
     }
 
@@ -107,7 +109,6 @@ export default class Commands {
             this.commandInput.value = '';
         });
     }
-
 
 }
 

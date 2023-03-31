@@ -1,6 +1,7 @@
 import '../messageBuilder/messageBuilder';
 import messageBuilder from '../messageBuilder/messageBuilder';
 import sidebarCategory from '../sidebarCategory/sidebarCategory';
+import geolocation from '../sendGeolocation/sendGeolocation';
 
 class FromInput {
     constructor(appTag) {
@@ -8,10 +9,11 @@ class FromInput {
         this.contentColumn = this.mainContainer.querySelector('.content-column');
         this.mainInput = this.mainContainer.querySelector('.main-input');
         this.fileInput = this.mainContainer.querySelector('.hidden-upload-btn');
+        this.geolocation = geolocation;
         this.builder = messageBuilder;
+        this.sidebar = sidebarCategory;
         this.lastMessageId = undefined;
         this.serverUrl = 'ws://localhost:7070'
-        this.sidebar = sidebarCategory;
         this.wsServer = new WebSocket(this.serverUrl);
 
         this.inputAccept = this.inputAccept.bind(this);
@@ -30,6 +32,7 @@ class FromInput {
         this.fileInput.addEventListener('change', this.fileLoad);
         this.contentColumn.addEventListener('dragover', this.dragEvent);
         this.contentColumn.addEventListener('drop',  this.dropEvent);
+        this.geolocation.geolocationBtn.addEventListener('click', this.geolocation.sendGeolocation);
 
     }
     openWs = (e) => {
@@ -60,7 +63,6 @@ class FromInput {
                 data.name = inputValue;
                 data.value = inputValue;
                 data.date = new Date().getTime();
-
                 this.builder.createMessage(data);
                 this.wsServer.send(JSON.stringify(data));
                 sidebarCategory.addCouuntValue(data);

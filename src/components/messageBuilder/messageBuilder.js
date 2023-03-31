@@ -191,6 +191,63 @@ class MessageBuilder {
         contentItem.appendChild(timeWrap);
         this.contentWrap.appendChild(contentItem);
     }
+
+    createGeolocationMessage(geoData) {
+        const data = geoData;
+        this.yandexStaticUrl = 'https://static-maps.yandex.ru/1.x/';
+        this.urlIcon = `pt=${geoData.longitude},${geoData.latitude}`;
+        this.imgUrl = `${this.yandexStaticUrl}?ll=${geoData.longitude},${geoData.latitude}&z=15&size=450,450&l=map&${this.urlIcon}`;
+        console.log(this.imgUrl)
+
+
+        const contentItem = document.createElement('div');
+        const contentText = document.createElement('div');
+        const geolocationWrap = document.createElement('div');
+        const geolocationCordsWrap = document.createElement('div');
+        const geolocationLatitude = document.createElement('div');
+        const geolocationLongitude = document.createElement('div');
+        const geolocationLocalTime = document.createElement('div');
+        const geolocationImageWrap = document.createElement('div');
+        const geolocationImage = document.createElement('img');
+        const contentDate = document.createElement('div');
+
+        const geolocationLatitudeH4 = document.createElement('h4');
+        const geolocationLongitudeH4 = document.createElement('h4');
+        const geolocationLocalTimeH4 = document.createElement('h4');
+
+        geolocationLatitudeH4.textContent = data.latitude;
+        geolocationLongitudeH4.textContent = data.longitude;
+        geolocationLocalTimeH4.textContent = data.localTime;
+        geolocationImage.setAttribute('src', this.imgUrl)
+
+        contentItem.classList.add('content-item');
+        contentText.classList.add('content-text');
+        geolocationWrap.classList.add('geolocation-wrap');
+        geolocationCordsWrap.classList.add('geolocation-cords-wrap');
+        geolocationLatitude.classList.add('geolocation-latitude');
+        geolocationLongitude.classList.add('geolocation-longitude');
+        geolocationLocalTime.classList.add('geolocation-local-time');
+        geolocationImageWrap.classList.add('geolocation-image-wrap');
+        geolocationImage.classList.add('geolocation-image');
+
+        geolocationLatitude.appendChild(geolocationLatitudeH4);
+        geolocationLongitude.appendChild(geolocationLongitudeH4);
+        geolocationLocalTime.appendChild(geolocationLocalTimeH4);
+
+        geolocationCordsWrap.appendChild(geolocationLatitude);
+        geolocationCordsWrap.appendChild(geolocationLongitude);
+        geolocationCordsWrap.appendChild(geolocationLocalTime);
+        geolocationImageWrap.appendChild(geolocationImage);
+
+        geolocationWrap.appendChild(geolocationCordsWrap);
+        geolocationWrap.appendChild(geolocationImageWrap);
+        contentText.appendChild(geolocationWrap);
+        contentItem.appendChild(contentText);
+
+        this.contentWrap.appendChild(contentItem);
+        this.contentWrap.lastChild.scrollIntoView();
+
+    }
 }
 
 const messageBuilder = new MessageBuilder('.app-container');

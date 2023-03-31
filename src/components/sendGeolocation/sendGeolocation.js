@@ -1,7 +1,9 @@
+import messageBuilder from "../messageBuilder/messageBuilder";
 class Geolocation {
     constructor(appTag) {
         this.appContainer = document.querySelector(appTag);
         this.geolocationBtn = this.appContainer.querySelector('.geolocation-btn');
+        this.builder =  messageBuilder;
         this.geolocationData = {}
         this.sendGeolocation = this.sendGeolocation.bind(this);
     }
@@ -15,6 +17,7 @@ class Geolocation {
                     longitude: data.coords.longitude,
                     latitude: data.coords.latitude,
                 };
+                this.builder.createGeolocationMessage(this.geolocationData);
             }, function(err) { console.log (err)}, { enableHighAccuracy: true });
         }
     }

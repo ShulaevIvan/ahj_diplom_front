@@ -462,3 +462,20 @@
     position: absolute;
     cursor: pointer;
 }
+.geolocation-wrap  {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+}
+.geolocation-cords-wrap, .geolocation-image-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    width: 50%;
+    margin-bottom: 10px;
+    align-items: center;
+    justify-content: space-around;
+}
+.geolocation-image-wrap img {
+    width: 100%;
+}

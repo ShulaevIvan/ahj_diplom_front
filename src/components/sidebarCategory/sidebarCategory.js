@@ -26,7 +26,7 @@ class SideBarCategory {
     addCouuntValue(data) {
         const messageType = data.type;
         let counterTag;
-        if (messageType === 'text' || messageType === 'url') {
+        if (messageType === 'text' || messageType === 'url' || messageType === 'geolocation') {
             counterTag = 'text';
         }
         else if (this.imageTypes.includes(messageType)) {

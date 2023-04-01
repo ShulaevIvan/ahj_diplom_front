@@ -192,14 +192,12 @@ class MessageBuilder {
         this.contentWrap.appendChild(contentItem);
     }
 
-    createGeolocationMessage(geoData) {
+    createGeolocationMessage(geoData, id, history = false) {
         const data = geoData;
         this.yandexStaticUrl = 'https://static-maps.yandex.ru/1.x/';
-        this.urlIcon = `pt=${geoData.longitude},${geoData.latitude}`;
-        this.imgUrl = `${this.yandexStaticUrl}?ll=${geoData.longitude},${geoData.latitude}&z=15&size=450,450&l=map&${this.urlIcon}`;
-        console.log(this.imgUrl)
-
-
+        this.urlIcon = `pt=${data.value.longitude},${data.value.latitude}`;
+        this.imgUrl = `${this.yandexStaticUrl}?ll=${data.value.longitude},${data.value.latitude}&z=15&size=450,450&l=map&${this.urlIcon}`;
+        
         const contentItem = document.createElement('div');
         const contentText = document.createElement('div');
         const geolocationWrap = document.createElement('div');
@@ -209,16 +207,18 @@ class MessageBuilder {
         const geolocationLocalTime = document.createElement('div');
         const geolocationImageWrap = document.createElement('div');
         const geolocationImage = document.createElement('img');
-        const contentDate = document.createElement('div');
+        const contentItemDate = document.createElement('div');
 
         const geolocationLatitudeH4 = document.createElement('h4');
         const geolocationLongitudeH4 = document.createElement('h4');
         const geolocationLocalTimeH4 = document.createElement('h4');
 
-        geolocationLatitudeH4.textContent = data.latitude;
-        geolocationLongitudeH4.textContent = data.longitude;
-        geolocationLocalTimeH4.textContent = data.localTime;
-        geolocationImage.setAttribute('src', this.imgUrl)
+        geolocationLatitudeH4.textContent = data.value.latitude;
+        geolocationLongitudeH4.textContent = data.value.longitude;
+        geolocationLocalTimeH4.textContent = data.value.localTime;
+        contentItemDate.textContent = new Date(data.date).toLocaleString('ru');
+        geolocationImage.setAttribute('src', this.imgUrl);
+        id ? contentItem.setAttribute('messageId', id): contentItem.setAttribute('messageId', data.id);
 
         contentItem.classList.add('content-item');
         contentText.classList.add('content-text');
@@ -229,6 +229,7 @@ class MessageBuilder {
         geolocationLocalTime.classList.add('geolocation-local-time');
         geolocationImageWrap.classList.add('geolocation-image-wrap');
         geolocationImage.classList.add('geolocation-image');
+        contentItemDate.classList.add('content-item-date');
 
         geolocationLatitude.appendChild(geolocationLatitudeH4);
         geolocationLongitude.appendChild(geolocationLongitudeH4);
@@ -242,11 +243,10 @@ class MessageBuilder {
         geolocationWrap.appendChild(geolocationCordsWrap);
         geolocationWrap.appendChild(geolocationImageWrap);
         contentText.appendChild(geolocationWrap);
+        contentText.appendChild(contentItemDate)
         contentItem.appendChild(contentText);
 
-        this.contentWrap.appendChild(contentItem);
-        this.contentWrap.lastChild.scrollIntoView();
-
+        data && history ? this.contentWrap.insertBefore(contentItem, this.contentWrap.firstElementChild.nextSibling) : this.contentWrap.appendChild(contentItem);
     }
 }
 

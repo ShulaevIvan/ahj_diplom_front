@@ -48,7 +48,13 @@ class LazyLoad {
             .then((data) => {
                 if (data.history.length <= 10) {
                     data.history.forEach((item) => {
-                        this.bulder.createMessage(item.data, item.data.id, true);
+                        if (item.data.type === 'geolocation') {
+                            this.bulder.createGeolocationMessage(item.data, item.data.id, true)
+                        }
+                        else  {
+                            this.bulder.createMessage(item.data, item.data.id, true);
+                        }
+                        
                     });
                 }
             });
@@ -79,8 +85,10 @@ class LazyLoad {
                 this.counter += 1;
                 this.sidebarCategory.addCouuntValue(msgObj.data)
                 if (this.imageTypes.includes(msgObj.data.type) || msgObj.data.type === 'text' || msgObj.data.type === 'url' && this.counter <= 10) {
-                    console.log(msgObj.data.value)
                     msg = messageBuilder.createMessage(msgObj.data);
+                }
+                else if (msgObj.data.type === 'geolocation' && this.counter <= 10) {
+                    msg = messageBuilder.createGeolocationMessage(msgObj.data, msgObj.data.id);
                 }
                 else if (this.audioTypes.includes(msgObj.data.type) || this.videoTypes.includes(msgObj.data.type) && this.counter <= 10) {
                     const reader = new FileReader();

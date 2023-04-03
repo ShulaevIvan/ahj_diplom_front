@@ -5,11 +5,11 @@ import AudioInput from '../components/audioInput/audioInput';
 import lazyLoad from '../components/lazyLoad/lazyLoad';
 
 window.addEventListener('DOMContentLoaded', () => {
-    const mainInput = new FromInput('.app-container');
-    const url = 'http://localhost:7070';
-    const lLoad = lazyLoad;
-    const search = new Search('.app-container');
-    const commands = new Commands('.app-container');
-    const audioInput = new AudioInput('.app-container');
-    lLoad.loadMessages();
+  const mainTag = '.app-container';
+  const mainInput = new FromInput(mainTag);
+  const lLoad = lazyLoad;
+  const search = new Search(mainTag);
+  const commands = new Commands(mainTag);
+  const audioInput = new AudioInput(mainTag);
+  lLoad.loadMessages();
 });

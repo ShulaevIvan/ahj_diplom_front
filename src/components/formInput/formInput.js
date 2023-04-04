@@ -12,8 +12,9 @@ class FromInput {
     this.builder = messageBuilder;
     this.sidebar = sidebarCategory;
     this.lastMessageId = undefined;
-    this.serverUrl = 'ws://localhost:7070';
-    this.wsServer = new WebSocket(this.serverUrl);
+    this.serverWsUrl = 'ws://localhost:7070';
+    this.serverUrl = 'http://localhost:7070';
+    this.wsServer = new WebSocket(this.serverWsUrl);
 
     this.inputAccept = this.inputAccept.bind(this);
     this.validateMainInput = this.validateMainInput.bind(this);
@@ -31,13 +32,13 @@ class FromInput {
     this.geolocation.geolocationBtn.addEventListener('click', this.geolocation.sendGeolocation);
   }
 
-  inputAccept = (e) => {
+  inputAccept = async (e) => {
     const inputValue = e.target.value;
     const checkCommand = /^@chaos:/g;
     if (inputValue.match(checkCommand)) return;
 
     if (e.key === 'Enter' && inputValue !== '' && inputValue.trim() !== '') {
-      fetch('http://localhost:7070/messages/lastid', { method: 'GET' })
+      await fetch(`${this.serverUrl}/messages/lastid`, { method: 'GET' })
         .then((response) => response.json())
         .then((data) => {
           this.lastMessageId = data.lastId;
@@ -50,7 +51,7 @@ class FromInput {
           data.date = new Date().getTime();
           this.builder.createMessage(data);
           this.wsServer.send(JSON.stringify(data));
-          sidebarCategory.addCouuntValue(data);
+          this.sidebar.addCouuntValue(data);
 
           this.mainInput.value = '';
           if (lastItem.lastChild) lastItem.scrollIntoView(true);
@@ -59,11 +60,10 @@ class FromInput {
   };
 
   fileLoad = (e) => {
-    const files = e.srcElement.files;
-
-    if (!files) return;
-    Object.entries(files).forEach((fileObj) => {
-      fetch('http://localhost:7070/messages/lastid', { method: 'GET' })
+    return new Promise((resolve, reject) => {
+      let files = e.srcElement.files;
+      Object.entries(files).forEach((fileObj) => {
+        fetch(`${this.serverUrl}/messages/lastid`, { method: 'GET' })
         .then((response) => response.json())
         .then((dataId) => {
           e.preventDefault();
@@ -71,15 +71,17 @@ class FromInput {
           const url = URL.createObjectURL(fileObj[1]);
           this.getBase64(fileObj[1], url);
         });
-    });
+      });
+      resolve();
+    })
   };
 
-  getBase64 = (file, url) => {
-    const messageId = this.lastMessageId;
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => {
-      const lastItem = this.contentColumn.lastChild;
+  getBase64 = async (file, url) =>  {
+    return new Promise((resolve, reject) => {
+      const messageId = this.lastMessageId;
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
       const data = {
         id: messageId,
         type: file.type,
@@ -88,11 +90,16 @@ class FromInput {
         file: reader.result,
         date: new Date().getTime(),
       };
-      this.builder.createMessage(data);
       this.wsServer.send(JSON.stringify(data));
-      sidebarCategory.addCouuntValue(data);
-      if (lastItem.lastChild) lastItem.scrollIntoView(true);
+      resolve(data)
     };
+    })
+    .then((data) => {
+      const lastItem = this.contentColumn.lastChild;
+      this.builder.createMessage(data);
+      if (lastItem.lastChild) lastItem.scrollIntoView(true);
+      this.sidebar.addCouuntValue(data);
+    })
   };
 
   validateMainInput = (inputData) => {
@@ -116,7 +123,7 @@ class FromInput {
     e.preventDefault();
     this.files = Array.from(e.dataTransfer.files);
     this.files.forEach((file) => {
-      fetch('http://localhost:7070/messages/lastid', { method: 'GET' })
+      fetch(`${this.serverUrl}/messages/lastid`, { method: 'GET' })
       // eslint-disable-next-line
         .then((response) => { if (response.status === 200) return response.json(); })
         .then((data) => {

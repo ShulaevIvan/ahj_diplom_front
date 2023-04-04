@@ -15,7 +15,7 @@ class Geolocation {
     this.sendGeolocation = this.sendGeolocation.bind(this);
   }
 
-  sendGeolocation = (e) => {
+  sendGeolocation = async (e) => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((geoData) => {
         this.geolocationData = {

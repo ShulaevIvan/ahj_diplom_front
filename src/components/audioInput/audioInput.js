@@ -1,4 +1,5 @@
 import messageBuilder from '../messageBuilder/messageBuilder';
+import sidebarCategory from '../sidebarCategory/sidebarCategory';
 
 export default class AudioInput {
   constructor(appTag) {
@@ -12,6 +13,7 @@ export default class AudioInput {
     this.soundController = undefined;
     this.microfoneTimerInterval = undefined;
     this.builder = messageBuilder;
+    this.sidebar = sidebarCategory;
     this.reader = new FileReader();
     this.lastId = undefined;
 
@@ -68,6 +70,7 @@ export default class AudioInput {
           };
           this.builder.createMessage(data);
           this.wsServer.send(JSON.stringify(data));
+          this.sidebar.addCouuntValue(data);
           const lastItem = this.appContainer.querySelector('.content-column').lastChild;
           if (lastItem.lastChild) lastItem.scrollIntoView(true);
         };

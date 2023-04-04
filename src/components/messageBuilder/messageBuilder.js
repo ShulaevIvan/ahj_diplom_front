@@ -103,7 +103,7 @@ class MessageBuilder {
       if (command) {
         contentItem.setAttribute('command', true);
         downloadBtn.href = data.file;
-      } else downloadBtn.href = data.value;
+      } else downloadBtn.href = data.file;
 
       downloadBtn.setAttribute('target', 'blank');
       downloadBtn.setAttribute('name', data.name);

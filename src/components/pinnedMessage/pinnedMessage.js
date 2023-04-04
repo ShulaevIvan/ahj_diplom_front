@@ -26,6 +26,7 @@ class PinnedMessage {
         })
           .then((response) => response.json())
           .then((data) => {
+            console.log(this.pinnedItem)
             this.createPinnedMessage(this.pinnedItem.cloneNode(true));
             this.pinnedItem = undefined;
           });
@@ -87,10 +88,11 @@ class PinnedMessage {
 
     pinnedLinkWrap.appendChild(pinnedLink);
 
-    if (video || img) pinnedMedia.appendChild(video.cloneNode(true));
+    if (video) pinnedMedia.appendChild(video.cloneNode(true));
+    if (img) pinnedMedia.appendChild(img.cloneNode(true));
     else if (audio) {
-      pinnedContent.style.width = `${20}%`;
-      pinnedMedia.style.width = `${50}%`;
+      pinnedContent.style.width = `${30}%`;
+      pinnedMedia.style.width = `${30}%`;
       pinnedMedia.appendChild(audio.cloneNode(true));
     }
 

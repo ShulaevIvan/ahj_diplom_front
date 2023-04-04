@@ -61,25 +61,15 @@ class LazyLoad {
     }
   };
 
-  loadMessages = async (e) => {
+  loadMessages = (e) => {
+  
     this.sidebarCategory.resetBtns.forEach((restBtn) => restBtn.removeEventListener('click', this.loadMessages));
     const displayingMsg = Array.from(this.contentColumn.querySelectorAll('.content-item'));
     const pinnedMssg = this.contentColumn.querySelector('.pinned-item');
     // eslint-disable-next-line
     pinnedMssg ? pinnedMssg.remove() : displayingMsg.forEach((item) => item.remove());
-
-    await fetch(`${this.serverUrl}/messages/`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json;charset=utf-8',
-      },
-    })
-    .then((response) => response.json())
-    .then((data) => {
-      this.sidebarCategory.addCounterByType(data.messages)
-    })
     
-    await fetch(`${this.serverUrl}/messages/last`, {
+    fetch(`${this.serverUrl}/messages/last`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json;charset=utf-8',
@@ -94,6 +84,7 @@ class LazyLoad {
         let msg;
         allMsg.forEach((msgObj) => {
           this.counter += 1;
+          this.sidebarCategory.addCouuntValue(msgObj.data);
           if (this.imageTypes.includes(msgObj.data.type) || msgObj.data.type === 'text' || msgObj.data.type === 'url' && this.counter <= 10) {
             msg = messageBuilder.createMessage(msgObj.data);
           } else if (msgObj.data.type === 'geolocation' && this.counter <= 10) {

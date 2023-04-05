@@ -64,9 +64,10 @@ class LazyLoad {
   loadMessages = async (e) => {
     this.sidebarCategory.resetBtns.forEach((restBtn) => restBtn.removeEventListener('click', this.loadMessages));
     const displayingMsg = Array.from(this.contentColumn.querySelectorAll('.content-item'));
-    const pinnedMssg = this.contentColumn.querySelector('.pinned-item');
+    const pinnedMsg = this.contentColumn.querySelector('.pinned-item');
     // eslint-disable-next-line
-    pinnedMssg ? pinnedMssg.remove() : displayingMsg.forEach((item) => item.remove());
+    if (pinnedMsg) pinnedMsg.remove()
+    displayingMsg.forEach((item) => item.remove());
 
     await fetch(`${this.serverUrl}/messages/`, {
       method: 'GET',
@@ -74,11 +75,11 @@ class LazyLoad {
         'Content-Type': 'application/json;charset=utf-8',
       },
     })
-    .then((response) => response.json())
-    .then((data) => {
-      this.sidebarCategory.addCounterByType(data.messages)
-    })
-    
+      .then((response) => response.json())
+      .then((data) => {
+        this.sidebarCategory.addCounterByType(data.messages);
+      });
+
     await fetch(`${this.serverUrl}/messages/last`, {
       method: 'GET',
       headers: {
@@ -110,14 +111,13 @@ class LazyLoad {
             msg = messageBuilder.createMessage(msgObj.data, msgObj.data.id);
           }
           if (msgObj.data.pinned) this.pinnedMessage.createPinnedMessage(msg);
-          
         });
         setTimeout(() => {
           const dispMsg = Array.from(this.contentColumn.querySelectorAll('.content-item'));
-          if (dispMsg.length > 0)  dispMsg[dispMsg.length - 1].scrollIntoView();
+          if (dispMsg.length > 0) dispMsg[dispMsg.length - 1].scrollIntoView();
         }, 200);
       });
-      this.sidebarCategory.resetBtns.forEach((restBtn) => restBtn.addEventListener('click', this.loadMessages));
+    this.sidebarCategory.resetBtns.forEach((restBtn) => restBtn.addEventListener('click', this.loadMessages));
   };
 
   countMessages() {

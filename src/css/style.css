@@ -217,7 +217,7 @@
 .weather-date span {
     margin: 0 2px;
 }
-.time-wrap {
+.time-wrap, .password-wrap {
     display: flex;
     width: 100%;
     justify-content: center;
@@ -478,4 +478,7 @@
 }
 .geolocation-image-wrap img {
     width: 100%;
+}
+.microphone-timer-minutes::after  {
+    content: ' : ';
 }

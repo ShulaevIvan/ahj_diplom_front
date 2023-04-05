@@ -19,6 +19,19 @@
       "LabeledStatement",
       "WithStatement"
     ],
+    "no-mixed-operators": [
+        "off",
+        {
+            "groups": [
+                ["+", "-", "*", "/", "%", "**"],
+                ["&", "|", "^", "~", "<<", ">>", ">>>"],
+                ["==", "!=", "===", "!==", ">", ">=", "<", "<="],
+                ["&&", "||"],
+                ["in", "instanceof"]
+            ],
+            "allowSamePrecedence": true
+        }
+    ],
     "no-unused-vars": "off",
     "no-alert": "off"
     }

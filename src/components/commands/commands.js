@@ -4,9 +4,10 @@ import lazyLoad from '../lazyLoad/lazyLoad';
 export default class Commands {
   constructor(appTag) {
     this.appContainer = document.querySelector(appTag);
+    this.contentColumn = this.appContainer.querySelector('.content-column');
     this.commandInput = this.appContainer.querySelector('.main-input');
     this.serverUrl = 'http://localhost:7070';
-    this.allCommands = ['погода', 'время', 'очистить', 'документы', 'медиа', 'геолокация'];
+    this.allCommands = ['weather', 'time', 'clear', 'roll', 'password'];
     this.lazyLoad = lazyLoad;
     this.currentCommand = undefined;
     this.geolocation = undefined;
@@ -17,24 +18,28 @@ export default class Commands {
   validateCommand = (e) => {
     const currentCommands = Array.from(document.querySelectorAll('[command="true"]'));
     if (currentCommands.length > 0) currentCommands.forEach((item) => item.remove());
-
     const checkMainCommand = /^@chaos:/g;
+
     if (e.target.value.match(checkMainCommand)) {
-      const commandVariable = e.target.value.replace(checkMainCommand, '').replace(/\s/g, '');
+      // eslint-disable-next-line
+      const commandVariable = e.target.value.replace(checkMainCommand, '').replace(/\s/g, '').replace(/\d/g, '').replace(/\+|\*|\-|\//g, '');
       const command = this.allCommands.indexOf(commandVariable);
       if (command !== -1) {
         this.currentCommand = this.allCommands[command];
         switch (this.allCommands[command]) {
-          case 'погода': this.getWeather(); break;
-          case 'время': this.showTime(); break;
-          case 'очистить': this.clearData(); break;
-          case 'документы': this.getFiles(); break;
-          case 'медиа': this.getMedia(); break;
+          case 'weather': this.getWeather(); break;
+          case 'time': this.showTime(); break;
+          case 'clear': this.clearData(); break;
+          case 'roll': this.roll(e.target.value); break;
+          case 'password': this.passwordGen(); break;
 
           default: break;
         }
-      }
-    } else if (currentCommands.length > 0) lazyLoad.loadMessages();
+      } else e.target.value = 'ошибка ввода';
+      setTimeout(() => {
+        this.contentColumn.scrollTop = this.contentColumn.scrollHeight;
+      }, 100);
+    }
   };
 
   getWeather() {
@@ -56,7 +61,14 @@ export default class Commands {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((data) => {
         this.geolocation = {
-          localTime: new Date(data.timestamp).toLocaleString(),
+          localTime: new Date(data.timestamp).toLocaleString('ru', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            hour: '2-digit',
+            minute: '2-digit',
+            day: 'numeric',
+          }),
           longitude: data.coords.longitude,
           latitude: data.coords.latitude,
         };
@@ -104,5 +116,41 @@ export default class Commands {
         });
         this.commandInput.value = '';
       });
+  }
+
+  roll(data) {
+    const strArr = data.replace(/^@chaos:(\s|\w)roll/, '').replace(/\s/g, '').split('-');
+    if (strArr.length < 2) return;
+    const min = strArr[0];
+    const max = strArr[1];
+    const resultObj = {
+      text: `случайное число в диапазоне от ${min} - ${max} `,
+      number: Math.floor(Math.random() * (max - min) + min),
+    };
+    this.builder.displayRoll(resultObj);
+  }
+
+  passwordGen() {
+    this.letters = 'abcdefghijklmnopqrstuvwxyz';
+    this.numeric = '0123456789';
+    this.symbols = '!@#$%^&*+~`|?=';
+    this.minLength = 10;
+    this.resultPassword = '';
+    this.tmpStr = '';
+
+    while (this.resultPassword.length < this.minLength) {
+      const rndLetter = Math.ceil(this.letters.length * Math.random() * Math.random());
+      const rndNumber = Math.ceil(this.numeric.length * Math.random() * Math.random());
+      const rndSymbols = Math.ceil(this.symbols.length * Math.random() * Math.random());
+      let catchLetterElem = this.letters.charAt(rndLetter);
+      catchLetterElem = (this.resultPassword.length % 2 === 0)
+        ? (catchLetterElem.toUpperCase()) : (catchLetterElem);
+      this.tmpStr += catchLetterElem;
+      this.tmpStr += this.numeric.charAt(rndNumber);
+      this.tmpStr += this.symbols.charAt(rndSymbols);
+      this.resultPassword = this.tmpStr;
+    }
+    this.resultPassword = this.resultPassword.split('').sort(() => 0.5 - Math.random()).join('');
+    this.builder.displayPassword(this.resultPassword);
   }
 }

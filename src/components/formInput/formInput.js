@@ -26,6 +26,7 @@ class FromInput {
     this.wsServer.addEventListener('close', this.closeWs);
     this.wsServer.addEventListener('message', this.messageWs);
     this.mainInput.addEventListener('keydown', this.inputAccept);
+    this.mainInput.addEventListener('click', this.clearInput);
     this.fileInput.addEventListener('change', this.fileLoad);
     this.contentColumn.addEventListener('dragover', this.dragEvent);
     this.contentColumn.addEventListener('drop', this.dropEvent);
@@ -59,53 +60,55 @@ class FromInput {
     }
   };
 
-  fileLoad = (e) => {
+  async fileLoad(e) {
     return new Promise((resolve, reject) => {
-      let files = e.srcElement.files;
+      const files = e.srcElement.files;
       Object.entries(files).forEach((fileObj) => {
         fetch(`${this.serverUrl}/messages/lastid`, { method: 'GET' })
-        .then((response) => response.json())
-        .then((dataId) => {
-          e.preventDefault();
-          this.lastMessageId = dataId.lastId;
-          const url = URL.createObjectURL(fileObj[1]);
-          this.getBase64(fileObj[1], url);
-        });
+          .then((response) => response.json())
+          .then((dataId) => {
+            e.preventDefault();
+            this.lastMessageId = dataId.lastId;
+            const url = URL.createObjectURL(fileObj[1]);
+            this.getBase64(fileObj[1], url);
+          });
       });
       resolve();
-    })
-  };
+    });
+  }
 
-  getBase64 = async (file, url) =>  {
+  async getBase64(file, url) {
     return new Promise((resolve, reject) => {
       const messageId = this.lastMessageId;
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = () => {
-      const data = {
-        id: messageId,
-        type: file.type,
-        name: file.name,
-        value: url,
-        file: reader.result,
-        date: new Date().getTime(),
+        const data = {
+          id: messageId,
+          type: file.type,
+          name: file.name,
+          value: url,
+          file: reader.result,
+          date: new Date().getTime(),
+        };
+        this.wsServer.send(JSON.stringify(data));
+        resolve(data);
       };
-      this.wsServer.send(JSON.stringify(data));
-      resolve(data)
-    };
     })
-    .then((data) => {
-      const lastItem = this.contentColumn.lastChild;
-      this.builder.createMessage(data);
-      if (lastItem.lastChild) lastItem.scrollIntoView(true);
-      this.sidebar.addCouuntValue(data);
-    })
-  };
+      .then((data) => {
+        const lastItem = this.contentColumn.lastChild;
+        this.builder.createMessage(data);
+        setTimeout(() => {
+          if (lastItem.lastChild) lastItem.scrollIntoView(true);
+          this.sidebar.addCouuntValue(data);
+        }, 300);
+      });
+  }
 
   validateMainInput = (inputData) => {
     this.inputData = inputData;
     // eslint-disable-next-line
-    const catchUrl = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)/;
+    const catchUrl = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)/;
     const catchImg = /([/|.|\w|\s|-])*\.(?:jpg|gif|png|svg|gif)/;
 
     if (catchUrl.test(this.inputData)) return 'url';
@@ -132,6 +135,11 @@ class FromInput {
           this.getBase64(file, url);
         });
     });
+  };
+
+  clearInput = (e) => {
+    this.target = e.target;
+    if (this.target.value === 'ошибка ввода') this.target.value = '';
   };
 }
 

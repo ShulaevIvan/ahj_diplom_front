@@ -26,7 +26,6 @@ class PinnedMessage {
         })
           .then((response) => response.json())
           .then((data) => {
-            console.log(this.pinnedItem)
             this.createPinnedMessage(this.pinnedItem.cloneNode(true));
             this.pinnedItem = undefined;
           });

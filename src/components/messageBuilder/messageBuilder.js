@@ -169,6 +169,36 @@ class MessageBuilder {
     this.contentWrap.lastChild.scrollIntoView();
   }
 
+  displayPassword(data) {
+    const contentItem = document.createElement('div');
+    const passwordWrap = document.createElement('div');
+
+    contentItem.classList.add('content-item');
+    passwordWrap.classList.add('password-wrap');
+
+    contentItem.setAttribute('command', true);
+    passwordWrap.textContent = `password: ${data}`;
+
+    passwordWrap.addEventListener('click', this.passwordCopyEvent);
+
+    contentItem.appendChild(passwordWrap);
+    this.contentWrap.appendChild(contentItem);
+  }
+
+  displayRoll(data) {
+    const contentItem = document.createElement('div');
+    const passwordWrap = document.createElement('div');
+
+    contentItem.classList.add('content-item');
+    passwordWrap.classList.add('password-wrap');
+
+    contentItem.setAttribute('command', true);
+    passwordWrap.textContent = `${data.text}  = ${data.number}`;
+
+    contentItem.appendChild(passwordWrap);
+    this.contentWrap.appendChild(contentItem);
+  }
+
   displayTime(data) {
     const contentItem = document.createElement('div');
     const timeWrap = document.createElement('div');
@@ -188,60 +218,68 @@ class MessageBuilder {
     this.yandexStaticUrl = 'https://static-maps.yandex.ru/1.x/';
     this.urlIcon = `pt=${data.value.longitude},${data.value.latitude}`;
     this.imgUrl = `${this.yandexStaticUrl}?ll=${data.value.longitude},${data.value.latitude}&z=15&size=450,450&l=map&${this.urlIcon}`;
+    setTimeout(() => {
+      const contentItem = document.createElement('div');
+      const contentText = document.createElement('div');
+      const geolocationWrap = document.createElement('div');
+      const geolocationCordsWrap = document.createElement('div');
+      const geolocationLatitude = document.createElement('div');
+      const geolocationLongitude = document.createElement('div');
+      const geolocationLocalTime = document.createElement('div');
+      const geolocationImageWrap = document.createElement('div');
+      const geolocationImage = document.createElement('img');
+      const contentItemDate = document.createElement('div');
 
-    const contentItem = document.createElement('div');
-    const contentText = document.createElement('div');
-    const geolocationWrap = document.createElement('div');
-    const geolocationCordsWrap = document.createElement('div');
-    const geolocationLatitude = document.createElement('div');
-    const geolocationLongitude = document.createElement('div');
-    const geolocationLocalTime = document.createElement('div');
-    const geolocationImageWrap = document.createElement('div');
-    const geolocationImage = document.createElement('img');
-    const contentItemDate = document.createElement('div');
+      const geolocationLatitudeH4 = document.createElement('h4');
+      const geolocationLongitudeH4 = document.createElement('h4');
+      const geolocationLocalTimeH4 = document.createElement('h4');
 
-    const geolocationLatitudeH4 = document.createElement('h4');
-    const geolocationLongitudeH4 = document.createElement('h4');
-    const geolocationLocalTimeH4 = document.createElement('h4');
+      geolocationLatitudeH4.textContent = data.value.latitude;
+      geolocationLongitudeH4.textContent = data.value.longitude;
+      geolocationLocalTimeH4.textContent = data.value.localTime;
+      contentItemDate.textContent = new Date(data.date).toLocaleString('ru');
+      geolocationImage.setAttribute('src', this.imgUrl);
+      // eslint-disable-next-line
+      id ? contentItem.setAttribute('messageId', id) : contentItem.setAttribute('messageId', data.id);
 
-    geolocationLatitudeH4.textContent = data.value.latitude;
-    geolocationLongitudeH4.textContent = data.value.longitude;
-    geolocationLocalTimeH4.textContent = data.value.localTime;
-    contentItemDate.textContent = new Date(data.date).toLocaleString('ru');
-    geolocationImage.setAttribute('src', this.imgUrl);
-    // eslint-disable-next-line
-    id ? contentItem.setAttribute('messageId', id) : contentItem.setAttribute('messageId', data.id);
+      contentItem.classList.add('content-item');
+      contentText.classList.add('content-text');
+      geolocationWrap.classList.add('geolocation-wrap');
+      geolocationCordsWrap.classList.add('geolocation-cords-wrap');
+      geolocationLatitude.classList.add('geolocation-latitude');
+      geolocationLongitude.classList.add('geolocation-longitude');
+      geolocationLocalTime.classList.add('geolocation-local-time');
+      geolocationImageWrap.classList.add('geolocation-image-wrap');
+      geolocationImage.classList.add('geolocation-image');
+      contentItemDate.classList.add('content-item-date');
 
-    contentItem.classList.add('content-item');
-    contentText.classList.add('content-text');
-    geolocationWrap.classList.add('geolocation-wrap');
-    geolocationCordsWrap.classList.add('geolocation-cords-wrap');
-    geolocationLatitude.classList.add('geolocation-latitude');
-    geolocationLongitude.classList.add('geolocation-longitude');
-    geolocationLocalTime.classList.add('geolocation-local-time');
-    geolocationImageWrap.classList.add('geolocation-image-wrap');
-    geolocationImage.classList.add('geolocation-image');
-    contentItemDate.classList.add('content-item-date');
+      geolocationLatitude.appendChild(geolocationLatitudeH4);
+      geolocationLongitude.appendChild(geolocationLongitudeH4);
+      geolocationLocalTime.appendChild(geolocationLocalTimeH4);
 
-    geolocationLatitude.appendChild(geolocationLatitudeH4);
-    geolocationLongitude.appendChild(geolocationLongitudeH4);
-    geolocationLocalTime.appendChild(geolocationLocalTimeH4);
+      geolocationCordsWrap.appendChild(geolocationLatitude);
+      geolocationCordsWrap.appendChild(geolocationLongitude);
+      geolocationCordsWrap.appendChild(geolocationLocalTime);
+      geolocationImageWrap.appendChild(geolocationImage);
 
-    geolocationCordsWrap.appendChild(geolocationLatitude);
-    geolocationCordsWrap.appendChild(geolocationLongitude);
-    geolocationCordsWrap.appendChild(geolocationLocalTime);
-    geolocationImageWrap.appendChild(geolocationImage);
-
-    geolocationWrap.appendChild(geolocationCordsWrap);
-    geolocationWrap.appendChild(geolocationImageWrap);
-    contentText.appendChild(geolocationWrap);
-    contentText.appendChild(contentItemDate);
-    contentItem.appendChild(contentText);
-    // eslint-disable-next-line
-    data && history
-      ? this.contentWrap.insertBefore(contentItem, this.contentWrap.firstElementChild.nextSibling)
-      : this.contentWrap.appendChild(contentItem);
+      geolocationWrap.appendChild(geolocationCordsWrap);
+      geolocationWrap.appendChild(geolocationImageWrap);
+      contentText.appendChild(geolocationWrap);
+      contentText.appendChild(contentItemDate);
+      contentItem.appendChild(contentText);
+      // eslint-disable-next-line
+      data && history
+        ? this.contentWrap.insertBefore(contentItem, this.contentWrap.firstElementChild.nextSibling)
+        : this.contentWrap.appendChild(contentItem);
+    }, 300);
   }
+
+  passwordCopyEvent = (e) => {
+    const password = e.target.textContent.replace('password:', '');
+    navigator.clipboard.writeText(password);
+    e.target.textContent = 'скопирован в буфер';
+    e.target.removeEventListener('click', this.passwordCopyEvent);
+  };
 }
 
 const messageBuilder = new MessageBuilder('.app-container');

@@ -21,6 +21,7 @@
 #### сохранение в истории ссылок и текстовых сообщений;
 
 Сопировать/написать ссылку и отправить в input и нажать enter;
+![alt text](https://raw.githubusercontent.com/ShulaevIvan/ahj_diplom_front/master/screenshots/textMsg.png)
 
 #### загрузка файлов;
 

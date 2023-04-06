@@ -42,8 +42,8 @@ class FromInput {
       await fetch(`${this.serverUrl}/messages/lastid`, { method: 'GET' })
         .then((response) => response.json())
         .then((data) => {
-          const pattern = /(www|http:|https:)+[^\s]+[\w]/g
-          const patternText = /^[^/]*\s|\d/g
+          const pattern = /(www|http:|https:)+[^\s]+[\w]/g;
+          const patternText = /^[^/]*\s|\d/g;
           this.lastMessageId = data.lastId;
           const inputType = this.validateMainInput(inputValue);
           const lastItem = this.contentColumn.lastChild;

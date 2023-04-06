@@ -41,7 +41,7 @@ class MessageBuilder {
     msgName.classList.add('msg-name');
 
     if (data.type === 'url') {
-      let link = undefined;
+      let link = '';
       if (data.value !== data.name) {
         link = `<a href="${data.value}" target="_blank"> ${data.name} ${data.value}</a>`;
       } else {

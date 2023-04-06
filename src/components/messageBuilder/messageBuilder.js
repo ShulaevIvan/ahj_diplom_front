@@ -41,7 +41,12 @@ class MessageBuilder {
     msgName.classList.add('msg-name');
 
     if (data.type === 'url') {
-      const link = `<a href="${data.name}" target="_blank"> ${data.name}</a>`;
+      let link = undefined;
+      if (data.value !== data.name) {
+        link = `<a href="${data.value}" target="_blank"> ${data.name} ${data.value}</a>`;
+      } else {
+        link = `<a href="${data.value}" target="_blank"> ${data.value}</a>`;
+      }
       contentTextValue.innerHTML = link;
     } else if (this.imageTypes.includes(data.type)) {
       const fileName = data.name;
@@ -193,7 +198,7 @@ class MessageBuilder {
     passwordWrap.classList.add('password-wrap');
 
     contentItem.setAttribute('command', true);
-    passwordWrap.textContent = `${data.text}  = ${data.number}`;
+    passwordWrap.textContent = `${data.text} ${data.number}`;
 
     contentItem.appendChild(passwordWrap);
     this.contentWrap.appendChild(contentItem);

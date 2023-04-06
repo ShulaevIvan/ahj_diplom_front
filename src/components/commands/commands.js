@@ -35,6 +35,7 @@ export default class Commands {
 
           default: break;
         }
+        e.target.value = '';
       } else e.target.value = 'ошибка ввода';
       setTimeout(() => {
         this.contentColumn.scrollTop = this.contentColumn.scrollHeight;
@@ -124,7 +125,7 @@ export default class Commands {
     const min = strArr[0];
     const max = strArr[1];
     const resultObj = {
-      text: `случайное число в диапазоне от ${min} - ${max} `,
+      text: 'случайное число',
       number: Math.floor(Math.random() * (max - min) + min),
     };
     this.builder.displayRoll(resultObj);

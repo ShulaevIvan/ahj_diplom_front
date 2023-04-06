@@ -42,6 +42,8 @@ class FromInput {
       await fetch(`${this.serverUrl}/messages/lastid`, { method: 'GET' })
         .then((response) => response.json())
         .then((data) => {
+          const pattern = /(www|http:|https:)+[^\s]+[\w]/g
+          const patternText = /^[^/]*\s|\d/g
           this.lastMessageId = data.lastId;
           const inputType = this.validateMainInput(inputValue);
           const lastItem = this.contentColumn.lastChild;
@@ -50,6 +52,12 @@ class FromInput {
           data.name = inputValue;
           data.value = inputValue;
           data.date = new Date().getTime();
+          if (inputType === 'url' && pattern.test(inputValue)) {
+            const url = inputValue.match(pattern);
+            const name = inputValue.match(patternText);
+            if (name) data.name = name[0];
+            data.value = url[0];
+          }
           this.builder.createMessage(data);
           this.wsServer.send(JSON.stringify(data));
           this.sidebar.addCouuntValue(data);
@@ -81,9 +89,10 @@ class FromInput {
     return new Promise((resolve, reject) => {
       const messageId = this.lastMessageId;
       const reader = new FileReader();
+      let fileData = {};
       reader.readAsDataURL(file);
       reader.onload = () => {
-        const data = {
+        fileData = {
           id: messageId,
           type: file.type,
           name: file.name,
@@ -91,8 +100,12 @@ class FromInput {
           file: reader.result,
           date: new Date().getTime(),
         };
-        this.wsServer.send(JSON.stringify(data));
-        resolve(data);
+      };
+      reader.onloadend = () => {
+        this.wsServer.send(JSON.stringify(fileData));
+        setTimeout(() => {
+          resolve(fileData);
+        }, 1000);
       };
     })
       .then((data) => {
@@ -101,7 +114,7 @@ class FromInput {
         setTimeout(() => {
           if (lastItem.lastChild) lastItem.scrollIntoView(true);
           this.sidebar.addCouuntValue(data);
-        }, 300);
+        }, 1000);
       });
   }
 

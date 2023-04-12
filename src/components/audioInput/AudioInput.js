@@ -1,27 +1,29 @@
 import messageBuilder from '../messageBuilder/messageBuilder';
 import sidebarCategory from '../sidebarCategory/sidebarCategory';
+import appConfig from '../../configuration/Configuration';
 
 export default class AudioInput {
   constructor(appTag) {
-    this.serverUrl = 'ws://localhost:7070';
-    this.wsServer = new WebSocket(this.serverUrl);
+    this.appConfig = appConfig;
+    this.serverUrl = this.appConfig.serverUrl;
+    this.wsServer = new WebSocket(this.appConfig.websocketUrl);
+    
     this.appContainer = document.querySelector(appTag);
     this.microphone = this.appContainer.querySelector('.mic-btn');
     this.micCancelBtn = this.appContainer.querySelector('.mic-cancel-btn');
     this.micOkBtn = this.appContainer.querySelector('.mic-ok-btn');
     this.microphoneTimerTag = this.appContainer.querySelector('.microphone-timer');
+    this.microphoneTimerSecondsTag = this.appContainer.querySelector('.microphone-timer-seconds');
+    this.micpohoneTimerMinutesTag = this.appContainer.querySelector('.microphone-timer-minutes');
+
+    this.contentColumnSelector = '.content-column';
     this.soundController = undefined;
     this.microfoneTimerInterval = undefined;
     this.builder = messageBuilder;
     this.sidebar = sidebarCategory;
-    this.reader = new FileReader();
     this.lastId = undefined;
 
     this.microphone.setAttribute('mic-status', 'deactivated');
-
-    this.microphoneClickEvent = this.microphoneClickEvent.bind(this);
-    this.microphoneOkEvent = this.microphoneOkEvent.bind(this);
-    this.microphoneCancelEvent = this.microphoneCancelEvent.bind(this);
 
     this.micOkBtn.addEventListener('click', this.microphoneOkEvent);
     this.micCancelBtn.addEventListener('click', this.microphoneCancelEvent);
@@ -29,11 +31,9 @@ export default class AudioInput {
   }
 
   microphoneClickEvent = async (e) => {
-    const microphoneTimer = this.appContainer.querySelector('.microphone-timer');
-
     if (this.microphone.getAttribute('mic-status') === 'deactivated') {
       this.microphone.setAttribute('mic-status', 'active');
-      fetch('http://localhost:7070/messages/lastid', { method: 'GET' })
+      fetch(`${this.appConfig.serverUrl}${this.appConfig.childUrls.lastId}`, { method: 'GET' })
         .then((response) => response.json())
         // eslint-disable-next-line
         .then((data) => this.lastId = data.lastId);
@@ -71,7 +71,7 @@ export default class AudioInput {
           this.builder.createMessage(data);
           this.wsServer.send(JSON.stringify(data));
           this.sidebar.addCouuntValue(data);
-          const lastItem = this.appContainer.querySelector('.content-column').lastChild;
+          const lastItem = this.appContainer.querySelector(this.contentColumnSelector).lastChild;
           if (lastItem.lastChild) lastItem.scrollIntoView(true);
         };
       });
@@ -107,14 +107,12 @@ export default class AudioInput {
     }
   };
 
-  microfoneTimerFunc() {
-    const secondsTag = this.appContainer.querySelector('.microphone-timer-seconds');
-    const minutesTag = this.appContainer.querySelector('.microphone-timer-minutes');
+  microfoneTimerFunc = () => {
     let seconds = 0;
     let minutes = 0;
     let zero = true;
-    secondsTag.textContent = '00';
-    minutesTag.textContent = '00';
+    this.microphoneTimerSecondsTag.textContent = '00';
+    this.micpohoneTimerMinutesTag.textContent = '00';
     this.microfoneTimerInterval = setInterval(() => {
       seconds += 1;
       if (seconds === 60) {
@@ -123,11 +121,11 @@ export default class AudioInput {
       }
       if (seconds > 9 || minutes > 9) zero = false;
       if (zero) {
-        secondsTag.textContent = `0${seconds}`;
-        minutesTag.textContent = `0${minutes}`;
+        this.microphoneTimerSecondsTag.textContent = `0${seconds}`;
+        this.micpohoneTimerMinutesTag.textContent = `0${minutes}`;
       } else {
-        secondsTag.textContent = `${seconds}`;
-        minutesTag.textContent = `0${minutes}`;
+        this.microphoneTimerSecondsTag.textContent = `${seconds}`;
+        this.micpohoneTimerMinutesTag.textContent = `0${minutes}`;
       }
     }, 1000);
   }

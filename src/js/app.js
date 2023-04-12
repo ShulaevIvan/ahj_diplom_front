@@ -1,7 +1,7 @@
 import FromInput from '../components/formInput/formInput';
 import Search from '../components/search/search';
 import Commands from '../components/commands/commands';
-import AudioInput from '../components/audioInput/audioInput';
+import AudioInput from '../components/audioInput/AudioInput';
 import lazyLoad from '../components/lazyLoad/lazyLoad';
 
 window.addEventListener('DOMContentLoaded', () => {

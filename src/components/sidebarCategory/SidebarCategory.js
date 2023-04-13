@@ -1,7 +1,9 @@
-import messageBuilder from '../messageBuilder/messageBuilder';
+import messageBuilder from '../messageBuilder/MessageBuilder';
+import appConfig from '../../configuration/Configuration';
 
 class SideBarCategory {
   constructor(appTag) {
+    this.appConfig = appConfig;
     this.appContainer = document.querySelector(appTag);
     this.contentColumn = this.appContainer.querySelector('.content-column');
     this.sidebarColumn = this.appContainer.querySelector('.sidebar-column');
@@ -11,13 +13,14 @@ class SideBarCategory {
     this.sidebarVideoBlockWrap = this.sidebarColumn.querySelector('.sidebar-video-message-count-wrap');
     this.sidebarFielsBlockWrap = this.sidebarColumn.querySelector('.sidebar-fiels-message-count-wrap');
     this.resetBtns = Array.from(this.sidebarColumn.querySelectorAll('.sidebar-reset-filter'));
-    this.serverUrl = 'http://localhost:7070/';
+    this.serverUrl = appConfig.serverUrl;
     this.builder = messageBuilder;
     this.textTypes = ['text', 'url'];
     this.audioTypes = ['audio/ogg', 'audio/wav', 'audio/mp3', 'audio/mpeg'];
     this.videoTypes = ['video/mp4', 'video/ogg', 'video/webm'];
     this.imageTypes = ['image/png', 'image/avif', 'image/gif', 'image/jpeg', 'image/png', 'image/svg+xml', 'image/webp', 'image/avif', 'image/bmp'];
     this.geolocationType = ['geolocation'];
+    this.contentItemSelector = '.content-item';
 
     this.showBtns = Array.from(this.sidebarColumn.querySelectorAll('.show-messages-sidebar'))
       .forEach((btn) => btn.addEventListener('click', this.showMessagesEvent));
@@ -135,7 +138,7 @@ class SideBarCategory {
     if (typesObj.fiels.includes(type)) counterType = 'fiels';
     if (typesObj.geolocation.includes(type)) counterType = 'image';
 
-    await fetch(`${this.serverUrl}messages/counter?type=${counterType}`, { method: 'GET', headers: { 'Content-Type': 'application/json' } })
+    await fetch(`${this.appConfig.serverUrl}${this.appConfig.childUrls.counterType}${counterType}`, { method: 'GET', headers: { 'Content-Type': 'application/json' } })
       .then((response) => response.json())
       .then(((data) => {
         let dataCounter = data;
@@ -148,10 +151,10 @@ class SideBarCategory {
 
   showMessagesEvent = (e) => {
     const linktype = e.target.getAttribute('linktype');
-    fetch(`${this.serverUrl}messages/types?type=${linktype}`, { method: 'GET', headers: { 'Content-Type': 'application/json' } })
+    fetch(`${this.appConfig.serverUrl}${this.appConfig.childUrls.messageType}${linktype}`, { method: 'GET', headers: { 'Content-Type': 'application/json' } })
       .then((response) => response.json())
       .then(((data) => {
-        document.querySelectorAll('.content-item').forEach((item) => item.remove());
+        document.querySelectorAll(this.contentItemSelector).forEach((item) => item.remove());
         data.messages.forEach((msg) => {
           if (msg.data.type === 'geolocation') {
             this.builder.createGeolocationMessage(msg.data, msg.id);
@@ -160,7 +163,8 @@ class SideBarCategory {
           }
         });
         setTimeout(() => {
-          const loadedMessaeges = Array.from(this.contentColumn.querySelectorAll('.content-item'));
+          const loadedMessaeges = Array.from(this.contentColumn
+            .querySelectorAll(this.contentItemSelector));
           if (loadedMessaeges.length > 1) this.contentColumn.lastChild.scrollIntoView();
         }, 300);
       }));

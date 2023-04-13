@@ -1,11 +1,14 @@
-import messageBuilder from '../messageBuilder/messageBuilder';
-import pinnedMessage from '../pinnedMessage/pinnedMessage';
-import sidebarCategory from '../sidebarCategory/sidebarCategory';
+import messageBuilder from '../messageBuilder/MessageBuilder';
+import pinnedMessage from '../pinnedMessage/PinnedMessage';
+import sidebarCategory from '../sidebarCategory/SidebarCategory';
+import appConfig from '../../configuration/Configuration';
 
 class LazyLoad {
-  constructor(url) {
+  constructor() {
+    this.appConfig = appConfig;
     this.contentColumn = document.querySelector('.content-column');
-    this.serverUrl = url;
+    this.contentItemSelector = '.content-item';
+    this.pinnedItemSelector = '.pinned-item';
     this.bulder = messageBuilder;
     this.sidebarCategory = sidebarCategory;
     this.audioTypes = ['audio/ogg', 'audio/wav', 'audio/mp3', 'audio/mpeg'];
@@ -21,7 +24,8 @@ class LazyLoad {
   loadHistory = () => {
     this.oldHistory = undefined;
     if (this.contentColumn.scrollTop === 0) {
-      const displayingMsg = Array.from(this.contentColumn.querySelectorAll('.content-item'));
+      const displayingMsg = Array.from(this.contentColumn
+        .querySelectorAll(this.contentItemSelector));
       const displayingIds = [];
 
       if (displayingMsg.length < 10) return;
@@ -30,7 +34,7 @@ class LazyLoad {
         displayingIds.push(Number(msg.getAttribute('messageid')));
       });
 
-      fetch(`${this.serverUrl}/messages/actual`, {
+      fetch(`${this.appConfig.serverUrl}${this.appConfig.childUrls.acutalMsg}`, {
         method: 'POST',
         body: JSON.stringify(displayingIds),
         headers: {
@@ -38,7 +42,7 @@ class LazyLoad {
         },
       });
 
-      fetch(`${this.serverUrl}/messages/loadhistory`, {
+      fetch(`${this.appConfig.serverUrl}${this.appConfig.childUrls.loadHistory}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json;charset=utf-8',
@@ -52,9 +56,9 @@ class LazyLoad {
             data.history.forEach((item) => {
               if (item.data.type === 'geolocation') {
                 this.bulder.createGeolocationMessage(item.data, item.data.id, true);
-              } else {
-                this.bulder.createMessage(item.data, item.data.id, true);
+                return;
               }
+              this.bulder.createMessage(item.data, item.data.id, true);
             });
           }
         });
@@ -63,13 +67,13 @@ class LazyLoad {
 
   loadMessages = async (e) => {
     this.sidebarCategory.resetBtns.forEach((restBtn) => restBtn.removeEventListener('click', this.loadMessages));
-    const displayingMsg = Array.from(this.contentColumn.querySelectorAll('.content-item'));
-    const pinnedMsg = this.contentColumn.querySelector('.pinned-item');
+    const displayingMsg = Array.from(this.contentColumn.querySelectorAll(this.contentItemSelector));
+    const pinnedMsg = this.contentColumn.querySelector(this.pinnedItemSelector);
     // eslint-disable-next-line
-    if (pinnedMsg) pinnedMsg.remove()
+    if (pinnedMsg) pinnedMsg.remove();
     displayingMsg.forEach((item) => item.remove());
 
-    await fetch(`${this.serverUrl}/messages/`, {
+    await fetch(`${this.appConfig.serverUrl}${this.appConfig.childUrls.messages}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json;charset=utf-8',
@@ -80,7 +84,7 @@ class LazyLoad {
         this.sidebarCategory.addCounterByType(data.messages);
       });
 
-    await fetch(`${this.serverUrl}/messages/last`, {
+    await fetch(`${this.appConfig.serverUrl}${this.appConfig.childUrls.lastMessages}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json;charset=utf-8',
@@ -110,10 +114,12 @@ class LazyLoad {
             msgObj.data.value = msgObj.data.file;
             msg = messageBuilder.createMessage(msgObj.data, msgObj.data.id);
           }
-          if (msgObj.data.pinned) this.pinnedMessage.createPinnedMessage(msg);
+          if (msgObj.data.pinned) {
+            this.pinnedMessage.createPinnedMessage(msg);
+          }
         });
         setTimeout(() => {
-          const dispMsg = Array.from(this.contentColumn.querySelectorAll('.content-item'));
+          const dispMsg = Array.from(this.contentColumn.querySelectorAll(this.contentItemSelector));
           if (dispMsg.length > 0) dispMsg[dispMsg.length - 1].scrollIntoView();
         }, 200);
       });
@@ -121,10 +127,10 @@ class LazyLoad {
   };
 
   countMessages() {
-    this.messagesCount = Array.from(document.querySelectorAll('.content-item')).length;
+    this.messagesCount = Array.from(document.querySelectorAll(this.contentItemSelector)).length;
     return this.messagesCount;
   }
 }
-const lazyLoad = new LazyLoad('http://localhost:7070');
+const lazyLoad = new LazyLoad();
 
 export default lazyLoad;

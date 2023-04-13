@@ -1,8 +1,8 @@
-import FromInput from '../components/formInput/formInput';
-import Search from '../components/search/search';
-import Commands from '../components/commands/commands';
+import FromInput from '../components/formInput/FormInput';
+import Search from '../components/search/Search';
+import Commands from '../components/commands/Commands';
 import AudioInput from '../components/audioInput/AudioInput';
-import lazyLoad from '../components/lazyLoad/lazyLoad';
+import lazyLoad from '../components/lazyLoad/LazyLoad';
 
 window.addEventListener('DOMContentLoaded', () => {
   const mainTag = '.app-container';

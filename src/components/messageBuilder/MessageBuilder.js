@@ -1,7 +1,9 @@
-import pinnedMessage from '../pinnedMessage/pinnedMessage';
+import pinnedMessage from '../pinnedMessage/PinnedMessage';
+import appConfig from '../../configuration/Configuration';
 
 class MessageBuilder {
-  constructor(appTag) {
+  constructor() {
+    this.appConfig = appConfig;
     this.mainTag = document.querySelector('.app-container');
     this.contentWrap = this.mainTag.querySelector('.content-column');
     this.file = undefined;
@@ -10,6 +12,7 @@ class MessageBuilder {
     this.videoTypes = ['video/mp4', 'video/ogg', 'video/webm'];
     this.imageTypes = ['image/apng', 'image/avif', 'image/gif', 'image/jpeg', 'image/png', 'image/svg+xml', 'image/webp'];
     this.downloadFile = this.downloadFile.bind(this);
+    this.createGeolocationMessage = this.createGeolocationMessage.bind(this);
   }
 
   downloadFile = (e) => {
@@ -220,9 +223,8 @@ class MessageBuilder {
 
   createGeolocationMessage(geoData, id, history = false) {
     const data = geoData;
-    this.yandexStaticUrl = 'https://static-maps.yandex.ru/1.x/';
     this.urlIcon = `pt=${data.value.longitude},${data.value.latitude}`;
-    this.imgUrl = `${this.yandexStaticUrl}?ll=${data.value.longitude},${data.value.latitude}&z=15&size=450,450&l=map&${this.urlIcon}`;
+    this.imgUrl = `${this.appConfig.childUrls.yandexMapsUrl}?ll=${data.value.longitude},${data.value.latitude}&z=15&size=450,450&l=map&${this.urlIcon}`;
     setTimeout(() => {
       const contentItem = document.createElement('div');
       const contentText = document.createElement('div');

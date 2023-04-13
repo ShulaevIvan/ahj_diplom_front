@@ -1,23 +1,36 @@
+import appConfig from '../../configuration/Configuration';
+
 class PinnedMessage {
   constructor(appTag) {
+    this.appConfig = appConfig;
     this.appContainer = document.querySelector(appTag);
     this.pinnedWrap = this.appContainer.querySelector('.pinned-wrap');
+    this.contentItemSelector = '.content-item';
+    this.contentItemDateSelector = '.content-item-date';
+    this.pinnedItemSelector = '.pinned-item';
+    this.pinnedMediaSelector = '.pinned-media';
+    this.contentTextSelector = '.content-text-value';
+    this.pinnedContentSelector = '.pinned-content';
+    this.pinnedWrapSelector = '.pinned-wrap';
+    this.pinnedLinkSelector = '.pinned-link';
     this.pinnedMessageId = undefined;
     this.pinnedItem = undefined;
-    this.serverUrl = 'http://localhost:7070';
+    this.serverUrl = this.appConfig.serverUrl;
+    this.createPinnedMessage = this.createPinnedMessage.bind(this);
+    this.addPinned = this.addPinned.bind(this);
   }
 
   addPinned = (e) => {
-    const pinnedMessages = document.querySelectorAll('.pinned-item');
+    const pinnedMessages = this.appContainer.querySelectorAll(this.pinnedItemSelector);
     if (!e.target.classList.contains('download-btn') && pinnedMessages.length === 0) {
-      this.pinnedItem = e.target.parentNode.closest('.content-item');
+      this.pinnedItem = e.target.parentNode.closest(this.contentItemSelector);
       this.pinnedItem.setAttribute('pinned', 'true');
       if (this.pinnedMessageId === undefined) {
         this.pinnedMessageId = this.pinnedItem.getAttribute('messageid');
         const sendData = {
           id: this.pinnedMessageId,
         };
-        const req = fetch(`${this.serverUrl}/messages/setpinned`, {
+        const req = fetch(`${this.appConfig.serverUrl}${this.appConfig.childUrls.setPinned}`, {
           method: 'POST',
           body: JSON.stringify(sendData),
           headers: {
@@ -39,7 +52,7 @@ class PinnedMessage {
       const sendData = {
         id: pinnedId,
       };
-      fetch(`${this.serverUrl}/messages/rmpinned`, {
+      fetch(`${this.appConfig.serverUrl}${this.appConfig.childUrls.rmPinned}`, {
         method: 'POST',
         body: JSON.stringify(sendData),
         headers: {
@@ -49,8 +62,8 @@ class PinnedMessage {
       })
         .then((response) => response.json())
         .then((data) => {
-          const pinnedWrap = e.target.parentNode.closest('.pinned-wrap');
-          pinnedWrap.firstElementChild.querySelector('.pinned-link').removeEventListener('click', this.pinnedLinkEvent);
+          const pinnedWrap = e.target.parentNode.closest(this.pinnedWrapSelector);
+          pinnedWrap.firstElementChild.querySelector(this.pinnedLinkSelector).removeEventListener('click', this.pinnedLinkEvent);
           pinnedWrap.firstElementChild.remove();
           pinnedWrap.classList.remove('pinned-show');
           this.pinnedMessageId = undefined;
@@ -59,14 +72,14 @@ class PinnedMessage {
     }
   };
 
-  createPinnedMessage(tag) {
+  async createPinnedMessage(tag) {
     const id = tag.getAttribute('messageid');
-    const content = tag.querySelector('.content-text-value');
-    const date = tag.querySelector('.content-item-date');
+    const content = tag.querySelector(this.contentTextSelector);
+    const date = tag.querySelector(this.contentItemDateSelector);
     const video = content.querySelector('video');
     const audio = content.querySelector('audio');
     const img = content.querySelector('img');
-    const pinnedWrap = document.querySelector('.pinned-wrap');
+    const pinnedWrap = document.querySelector(this.pinnedWrapSelector);
     const pinnedItem = document.createElement('div');
     const pinnedMedia = document.createElement('div');
     const pinnedContent = document.createElement('div');
@@ -94,7 +107,6 @@ class PinnedMessage {
       pinnedMedia.style.width = `${30}%`;
       pinnedMedia.appendChild(audio.cloneNode(true));
     }
-
     pinnedContent.textContent = content.textContent;
     pinnedDate.textContent = date.textContent;
     pinnedItem.appendChild(pinnedMedia);
@@ -107,22 +119,22 @@ class PinnedMessage {
   }
 
   pinnedLinkEvent = (e) => {
-    this.item = e.target.parentNode.closest('.pinned-item');
+    this.item = e.target.parentNode.closest(this.pinnedItemSelector);
     if (!this.item.classList.contains('pinned-full')) {
-      const pinnedContent = this.item.querySelector('.pinned-content');
-      const pinnedMedia = this.item.querySelector('.pinned-media');
+      const pinnedContent = this.item.querySelector(this.pinnedContentSelector);
+      const pinnedMedia = this.item.querySelector(this.pinnedMediaSelector);
       this.item.classList.add('pinned-item-max');
       pinnedContent.classList.add('pinned-content-full');
       pinnedMedia.classList.add('pinned-media-full');
       this.item.classList.add('pinned-full');
-    } else {
-      const pinnedContent = this.item.querySelector('.pinned-content');
-      const pinnedMedia = this.item.querySelector('.pinned-media');
-      this.item.classList.remove('pinned-item-max');
-      pinnedContent.classList.remove('pinned-content-full');
-      pinnedMedia.classList.remove('pinned-media-full');
-      this.item.classList.remove('pinned-full');
+      return;
     }
+    const pinnedContent = this.item.querySelector(this.pinnedContentSelector);
+    const pinnedMedia = this.item.querySelector(this.pinnedMediaSelector);
+    this.item.classList.remove('pinned-item-max');
+    pinnedContent.classList.remove('pinned-content-full');
+    pinnedMedia.classList.remove('pinned-media-full');
+    this.item.classList.remove('pinned-full');
   };
 }
 

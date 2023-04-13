@@ -1,9 +1,11 @@
-import messageBuilder from '../messageBuilder/messageBuilder';
-import sidebarCategory from '../sidebarCategory/sidebarCategory';
-import geolocation from '../sendGeolocation/sendGeolocation';
+import messageBuilder from '../messageBuilder/MessageBuilder';
+import sidebarCategory from '../sidebarCategory/SidebarCategory';
+import geolocation from '../sendGeolocation/SendGeolocation';
+import appConfig from '../../configuration/Configuration';
 
 class FromInput {
   constructor(appTag) {
+    this.appConfig = appConfig;
     this.mainContainer = document.querySelector(appTag);
     this.contentColumn = this.mainContainer.querySelector('.content-column');
     this.mainInput = this.mainContainer.querySelector('.main-input');
@@ -12,9 +14,7 @@ class FromInput {
     this.builder = messageBuilder;
     this.sidebar = sidebarCategory;
     this.lastMessageId = undefined;
-    this.serverWsUrl = 'ws://localhost:7070';
-    this.serverUrl = 'http://localhost:7070';
-    this.wsServer = new WebSocket(this.serverWsUrl);
+    this.wsServer = new WebSocket(this.appConfig.websocketUrl);
 
     this.inputAccept = this.inputAccept.bind(this);
     this.validateMainInput = this.validateMainInput.bind(this);
@@ -39,7 +39,7 @@ class FromInput {
     if (inputValue.match(checkCommand)) return;
 
     if (e.key === 'Enter' && inputValue !== '' && inputValue.trim() !== '') {
-      await fetch(`${this.serverUrl}/messages/lastid`, { method: 'GET' })
+      await fetch(`${this.appConfig.serverUrl}${this.appConfig.childUrls.getLastId}`, { method: 'GET' })
         .then((response) => response.json())
         .then((data) => {
           const pattern = /(www|http:|https:)+[^\s]+[\w]/g;
@@ -72,7 +72,7 @@ class FromInput {
     return new Promise((resolve, reject) => {
       const files = e.srcElement.files;
       Object.entries(files).forEach((fileObj) => {
-        fetch(`${this.serverUrl}/messages/lastid`, { method: 'GET' })
+        fetch(`${this.appConfig.serverUrl}${this.appConfig.childUrls.getLastId}`, { method: 'GET' })
           .then((response) => response.json())
           .then((dataId) => {
             e.preventDefault();
@@ -114,7 +114,7 @@ class FromInput {
         setTimeout(() => {
           if (lastItem.lastChild) lastItem.scrollIntoView(true);
           this.sidebar.addCouuntValue(data);
-        }, 1000);
+        }, 800);
       });
   }
 
@@ -139,7 +139,7 @@ class FromInput {
     e.preventDefault();
     this.files = Array.from(e.dataTransfer.files);
     this.files.forEach((file) => {
-      fetch(`${this.serverUrl}/messages/lastid`, { method: 'GET' })
+      fetch(`${this.appConfig.serverUrl}${this.appConfig.childUrls.getLastId}`, { method: 'GET' })
       // eslint-disable-next-line
         .then((response) => { if (response.status === 200) return response.json(); })
         .then((data) => {

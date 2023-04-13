@@ -1,17 +1,17 @@
-import messageBuilder from '../messageBuilder/messageBuilder';
-import sidebarCategory from '../sidebarCategory/sidebarCategory';
+import messageBuilder from '../messageBuilder/MessageBuilder';
+import sidebarCategory from '../sidebarCategory/SidebarCategory';
+import appConfig from '../../configuration/Configuration';
 
 class Geolocation {
   constructor(appTag) {
+    this.appConfig = appConfig;
     this.appContainer = document.querySelector(appTag);
     this.contentColumn = this.appContainer.querySelector('.content-column');
     this.geolocationBtn = this.appContainer.querySelector('.geolocation-btn');
     this.builder = messageBuilder;
     this.sidebar = sidebarCategory;
     this.geolocationData = {};
-    this.serverWsUrl = 'ws://localhost:7070';
-    this.serverUrl = 'http://localhost:7070';
-    this.wsServer = new WebSocket(this.serverWsUrl);
+    this.wsServer = new WebSocket(this.appConfig.websocketUrl);
     this.sendGeolocation = this.sendGeolocation.bind(this);
   }
 
@@ -23,7 +23,7 @@ class Geolocation {
           longitude: geoData.coords.longitude,
           latitude: geoData.coords.latitude,
         };
-        fetch(`${this.serverUrl}/messages/lastid`, { method: 'GET' }).then((response) => response.json())
+        fetch(`${this.appConfig.serverUrl}${this.appConfig.childUrls.getLastId}`, { method: 'GET' }).then((response) => response.json())
           .then((lastIdData) => {
             const data = {
               id: lastIdData.lastId,
@@ -36,7 +36,9 @@ class Geolocation {
             this.builder.createGeolocationMessage(data, data.id);
             this.sidebar.addCouuntValue(data);
             const lastItem = this.contentColumn.lastChild;
-            if (lastItem.lastChild) lastItem.scrollIntoView(true);
+            setTimeout(() => {
+              if (lastItem.lastChild) lastItem.scrollIntoView(true);
+            }, 500);
           });
       }, this.onErr, { enableHighAccuracy: true });
     }

@@ -1,22 +1,27 @@
-import messageBuilder from '../messageBuilder/messageBuilder';
-import lazyLoad from '../lazyLoad/lazyLoad';
+import messageBuilder from '../messageBuilder/MessageBuilder';
+import lazyLoad from '../lazyLoad/LazyLoad';
+import appConfig from '../../configuration/Configuration';
 
 export default class Commands {
   constructor(appTag) {
+    this.appConfig = appConfig;
     this.appContainer = document.querySelector(appTag);
     this.contentColumn = this.appContainer.querySelector('.content-column');
     this.commandInput = this.appContainer.querySelector('.main-input');
-    this.serverUrl = 'http://localhost:7070';
     this.allCommands = ['weather', 'time', 'clear', 'roll', 'password'];
+    this.commandSelector = '[command="true"]';
+    this.contentItemSelector = '.content-item';
     this.lazyLoad = lazyLoad;
+    this.builder = messageBuilder;
     this.currentCommand = undefined;
     this.geolocation = undefined;
-    this.builder = messageBuilder;
     this.commandInput.addEventListener('change', this.validateCommand);
+
+    this.validateCommand = this.validateCommand.bind(this);
   }
 
   validateCommand = (e) => {
-    const currentCommands = Array.from(document.querySelectorAll('[command="true"]'));
+    const currentCommands = Array.from(document.querySelectorAll(this.commandSelector));
     if (currentCommands.length > 0) currentCommands.forEach((item) => item.remove());
     const checkMainCommand = /^@chaos:/g;
 
@@ -36,7 +41,9 @@ export default class Commands {
           default: break;
         }
         e.target.value = '';
-      } else e.target.value = 'ошибка ввода';
+        return;
+      }
+      e.target.value = 'ошибка ввода';
       setTimeout(() => {
         this.contentColumn.scrollTop = this.contentColumn.scrollHeight;
       }, 100);
@@ -46,7 +53,7 @@ export default class Commands {
   getWeather() {
     this.commandInput.value = '';
     // eslint-disable-next-line
-    fetch(`${this.serverUrl}/commands/weather`, { method: 'GET' }).then((response) => {
+    fetch(`${this.appConfig.serverUrl}${this.appConfig.childUrls.getWeather}`, { method: 'GET' }).then((response) => {
       if (response.status === 200) return response.json();
     })
       .then((data) => {
@@ -80,7 +87,7 @@ export default class Commands {
   }
 
   clearData() {
-    fetch(`${this.serverUrl}/commands/deleteall/`, {
+    fetch(`${this.appConfig.serverUrl}${this.appConfig.childUrls.clearData}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
@@ -92,13 +99,14 @@ export default class Commands {
   }
 
   getFiles() {
-    fetch(`${this.serverUrl}/commands/files`, {
+    fetch(`${this.appConfig.serverUrl}${this.appConfig.childUrls.getFiles}}`, {
       method: 'GET', headers: { 'Content-Type': 'application/json' },
     })
     // eslint-disable-next-line
       .then((response) => { if (response.status === 200) return response.json(); })
       .then((data) => {
-        this.appContainer.querySelectorAll('.content-item').forEach((item) => item.remove());
+        this.appContainer.querySelectorAll(this.contentItemSelector)
+          .forEach((item) => item.remove());
         data.fiels.forEach((item) => {
           this.builder.createMessage(item.data, item.data.id, false, true);
         });
@@ -107,11 +115,12 @@ export default class Commands {
   }
 
   getMedia() {
-    fetch(`${this.serverUrl}/commands/media`, { method: 'GET', headers: { 'Content-Type': 'application/json' } })
+    fetch(`${this.appConfig.serverUrl}${this.appConfig.childUrls.getMedia}`, { method: 'GET', headers: { 'Content-Type': 'application/json' } })
     // eslint-disable-next-line
       .then((response) => { if (response.status === 200 ) return response.json(); })
       .then((data) => {
-        this.appContainer.querySelectorAll('.content-item').forEach((item) => item.remove());
+        this.appContainer.querySelectorAll(this.contentItemSelector)
+          .forEach((item) => item.remove());
         data.fiels.forEach((item) => {
           this.builder.createMessage(item.data, item.data.id, false, true);
         });

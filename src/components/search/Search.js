@@ -1,13 +1,16 @@
-import MessageBuilder from '../messageBuilder/messageBuilder';
-import lazyLoad from '../lazyLoad/lazyLoad';
+import messageBuilder from '../messageBuilder/MessageBuilder';
+import lazyLoad from '../lazyLoad/LazyLoad';
+import appConfig from '../../configuration/Configuration';
 
 export default class Search {
   constructor(appTag) {
+    this.appConfig = appConfig;
     this.mainContainer = document.querySelector(appTag);
     this.contentColumn = this.mainContainer.querySelector('.content-column');
-    this.builder = MessageBuilder;
+    this.builder = messageBuilder;
     this.lazyLoad = lazyLoad;
     this.displayedMessages = undefined;
+    this.contentItemSelector = '.content-item';
     this.searchInput = this.mainContainer.querySelector('.search-input');
     this.findMatches = this.findMatches.bind(this);
     this.clearInput = this.clearInput.bind(this);
@@ -20,12 +23,13 @@ export default class Search {
     // eslint-disable-next-line
     const target = e.target;
     target.removeEventListener('input', this.findMatches);
-    this.displayedMessages = Array.from(this.contentColumn.querySelectorAll('.content-item'));
+    this.displayedMessages = Array.from(this.contentColumn
+      .querySelectorAll(this.contentItemSelector));
     if (this.displayedMessages.length === 0) return;
 
     setTimeout(() => {
       const inputValue = target.value.trim();
-      fetch(`http://localhost:7070/messages/search?text=${inputValue}`, { method: 'GET' })
+      fetch(`${this.appConfig.serverUrl}${this.appConfig.childUrls.searchText}${inputValue}`, { method: 'GET' })
       // eslint-disable-next-line
         .then((response) => { if (response.status === 200) return response.json(); })
         .then((data) => {
@@ -35,16 +39,17 @@ export default class Search {
               this.builder.createMessage(message.data, message.data.id);
             });
             target.addEventListener('input', this.findMatches);
-          } else {
-            target.addEventListener('input', this.findMatches);
+            return;
           }
+          target.addEventListener('input', this.findMatches);
         });
     }, 300);
   };
 
   clearInput = (e) => {
     if (this.displayedMessages !== undefined) {
-      const currentMessages = Array.from(this.mainContainer.querySelectorAll('.content-item'));
+      const currentMessages = Array.from(this.mainContainer
+        .querySelectorAll(this.contentItemSelector));
       if (currentMessages.length > 0 && this.searchInput !== '') currentMessages.forEach((msg) => msg.remove());
       this.lazyLoad.loadMessages();
       this.searchInput.value = '';
@@ -55,7 +60,7 @@ export default class Search {
     if (e.keyCode === 8) this.searchInput.value = '';
 
     if (this.displayedMessages !== undefined) {
-      const currentMessages = this.mainContainer.querySelectorAll('.content-item');
+      const currentMessages = this.mainContainer.querySelectorAll(this.contentItemSelector);
       if (currentMessages.length > 0) currentMessages.forEach((msg) => msg.remove());
 
       this.displayedMessages.forEach((item) => {

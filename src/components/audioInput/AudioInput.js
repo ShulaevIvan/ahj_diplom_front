@@ -1,5 +1,5 @@
-import messageBuilder from '../messageBuilder/messageBuilder';
-import sidebarCategory from '../sidebarCategory/sidebarCategory';
+import messageBuilder from '../messageBuilder/MessageBuilder';
+import sidebarCategory from '../sidebarCategory/SidebarCategory';
 import appConfig from '../../configuration/Configuration';
 
 export default class AudioInput {
@@ -7,7 +7,7 @@ export default class AudioInput {
     this.appConfig = appConfig;
     this.serverUrl = this.appConfig.serverUrl;
     this.wsServer = new WebSocket(this.appConfig.websocketUrl);
-    
+
     this.appContainer = document.querySelector(appTag);
     this.microphone = this.appContainer.querySelector('.mic-btn');
     this.micCancelBtn = this.appContainer.querySelector('.mic-cancel-btn');
@@ -118,15 +118,16 @@ export default class AudioInput {
       if (seconds === 60) {
         minutes += 1;
         seconds = 0;
+        return;
       }
       if (seconds > 9 || minutes > 9) zero = false;
       if (zero) {
         this.microphoneTimerSecondsTag.textContent = `0${seconds}`;
         this.micpohoneTimerMinutesTag.textContent = `0${minutes}`;
-      } else {
-        this.microphoneTimerSecondsTag.textContent = `${seconds}`;
-        this.micpohoneTimerMinutesTag.textContent = `0${minutes}`;
+        return;
       }
+      this.microphoneTimerSecondsTag.textContent = `${seconds}`;
+      this.micpohoneTimerMinutesTag.textContent = `0${minutes}`;
     }, 1000);
-  }
+  };
 }

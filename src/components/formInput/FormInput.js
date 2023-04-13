@@ -56,7 +56,7 @@ class FromInput {
             const url = inputValue.match(pattern);
             const name = inputValue.match(patternText);
             if (name) data.name = name[0];
-            data.value = url[0];
+            data.value = `${url[0]}/`;
           }
           this.builder.createMessage(data);
           this.wsServer.send(JSON.stringify(data));

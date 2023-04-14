@@ -19,10 +19,12 @@ class LazyLoad {
     this.pinnedMessage = pinnedMessage;
     this.contentColumn.addEventListener('scroll', this.loadHistory);
     this.sidebarCategory.resetBtns.forEach((restBtn) => restBtn.addEventListener('click', this.loadMessages));
+    this.loadHistory = this.loadHistory.bind(this);
   }
 
   loadHistory = () => {
     this.oldHistory = undefined;
+    console.log(this)
     if (this.contentColumn.scrollTop === 0) {
       const displayingMsg = Array.from(this.contentColumn
         .querySelectorAll(this.contentItemSelector));
